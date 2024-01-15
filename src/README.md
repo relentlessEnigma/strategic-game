@@ -1,0 +1,21 @@
+## Features:
+- This is a text based console game for now.
+- This is supposed to be something like AOE
+- Select a farming name
+- After that, you receive 3 workers
+- You don't have a house yet.
+- You have allways a status bar indicating how many resources you have at the moment.
+- Resources available are:
+  - gold
+  - wood
+  - silver
+  - iron
+  - water
+  - food
+  - grapes
+- You must search for resources to start building a HeadQuarters
+- There are a lot of resources around the map!
+- Also, there are enemies out there!
+- You have a building menu, so you can choose what to build or upgrade next.
+- As you level up your main HeadQuarters, you'll have new b building unlocks or updates.
+- New buildings brings new features
