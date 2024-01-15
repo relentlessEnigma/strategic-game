@@ -26,6 +26,7 @@ public class Building {
 
     public void build() {
         if(amountConstructionsAllowed > 0) {
+            System.out.println("A retirar recursos necessários do teu inventário...");
             try {
                 Thread.sleep(getConstructionTimeInMils());
             } catch (InterruptedException e) {

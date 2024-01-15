@@ -48,6 +48,7 @@ class Worker {
         currentMission = constructionProcess.process + " de Edifício: " + construction.getConstructionTypeName();
         if(constructionProcess == ConstructionProcess.CREATION) {
             new ConstructionBuildingThread(construction, this).start();
+            System.out.println("Construção de " + construction.getConstructionTypeName() + " terminada!");
         } else {
             new ConstructionUpdatingThread(construction, this).start();
         }

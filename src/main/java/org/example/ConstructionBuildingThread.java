@@ -5,7 +5,6 @@ public class ConstructionBuildingThread extends Thread {
     private Building building;
     private Worker worker;
 
-
     public ConstructionBuildingThread(Building building, Worker worker) {
         this.building = building;
         this.worker = worker;

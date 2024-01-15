@@ -28,7 +28,7 @@ class Player {
             System.out.printf("%s: %d", entry.getResource().name(), entry.getAmount());
             System.out.print("   *   ");
         }
-        System.out.println(); // Adiciona uma nova linha após todos os recursos
+        System.out.println();
         System.out.println("====================================================================================================================");
     }
 
@@ -136,7 +136,20 @@ class Player {
 
     public void sendWorkersToBuild(ConstructionProcess process, Building construction) {
         Optional<Worker> availableWorker = this.workers.stream().filter(x -> !x.isOccupied()).findFirst();
+        prepareNeededResources(construction);
         availableWorker.ifPresent(worker -> worker.makeConstruction(process, construction));
+    }
+
+    private void prepareNeededResources(Building construction) {
+        List<ResourceAmount> requiredResources = construction.getResourceCost();
+
+        for (ResourceAmount buildingResource : requiredResources) {
+            for (ResourceAmount playerResource : resources) {
+                if(playerResource.getResource() == buildingResource.getResource()) {
+                    playerResource.setAmount(playerResource.getAmount() - buildingResource.getAmount());
+                }
+            }
+        }
     }
 
     public boolean haveWorkersAvailable() {
