@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 class Player {
     private String farmName;
@@ -162,5 +163,18 @@ class Player {
         if(buildingList.stream().allMatch(x -> x.getLevel() == nextLevel-1)) {
             setLevel(nextLevel);
         }
+    }
+
+    public Set<String> getAvailableConstructionTypes() {
+        return buildingList.stream()
+                .filter(building -> !checkIfBuildingAmountHasReached(building) && !checkIfBuildingHasReachedItsMaximLevel(building))
+                .map(Building::getConstructionTypeName)
+                .collect(Collectors.toSet());
+    }
+
+    public List<Building> getBuildingsFromConstructionName(String constructionName) {
+        return getBuildingList().stream()
+                .filter(building -> building.getConstructionTypeName().equals(constructionName))
+                .toList();
     }
 }

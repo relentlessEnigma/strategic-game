@@ -51,7 +51,7 @@ public class GameOfStrategy {
                     player.searchForResources(Resource.WOOD);
                     break;
                 case 2:
-                    buildStuff(player);
+                    displayBuildingTypes(player);
                     break;
                 case 0:
                     System.out.println("Obrigado por jogar!");
@@ -72,17 +72,12 @@ public class GameOfStrategy {
         System.out.print("Escolhe uma opção: ");
     }
 
-    private void buildStuff(Player player) {
+    private void displayBuildingTypes(Player player) {
         System.out.println("Lista de Edificios:");
-
-        Set<String> constructionTypes = player.getBuildingList().stream()
-                .filter(building -> !player.checkIfBuildingAmountHasReached(building) && !player.checkIfBuildingHasReachedItsMaximLevel(building))
-                .map(Building::getConstructionTypeName)
-                .collect(Collectors.toSet());
 
         int index = 1;
         Map<Integer, String> typeIndexMap = new HashMap<>();
-        for (String constructionType : constructionTypes) {
+        for (String constructionType : player.getAvailableConstructionTypes()) {
             System.out.println(index + ". " + constructionType);
             typeIndexMap.put(index++, constructionType);
         }
@@ -96,57 +91,62 @@ public class GameOfStrategy {
 
         if (typeOption > 0 && typeOption < index) {
             String selectedType = typeIndexMap.get(typeOption);
-            List<Building> buildingsOfType = player.getBuildingList().stream()
-                    .filter(building -> building.getConstructionTypeName().equals(selectedType))
-                    .toList();
-
-            System.out.println("Lista de Edificios " + selectedType + ":");
-            index = 1;
-            for (Building building : buildingsOfType) {
-                System.out.print(index + ". ");
-                building.showDetails();
-                index++;
-                if(!player.checkIfBuildingAmountHasReached(building)) {
-                    System.out.println(index + ". Create a new " + building.getConstructionTypeName());
-                }
-            }
-
-            System.out.println("Escolhe um edificio para construir ou atualizar: ");
-            int buildingOption = scanner.nextInt();
-            scanner.nextLine();
-
-            boolean isUpdatingAnExistentBuilding = buildingOption > 0 && buildingOption <= buildingsOfType.size();
-            boolean isCreatingANewBuilding = buildingOption == buildingsOfType.size() + 1;
-
-            if (isUpdatingAnExistentBuilding) {
-                Building selectedBuilding = buildingsOfType.get(buildingOption - 1);
-
-                if (player.checkIfPlayerHasEnoughResources(selectedBuilding)) {
-                    if(player.isFirstTimeBuilding(selectedBuilding)) {
-                        if(player.haveWorkersAvailable()) {
-                            player.sendWorkersToBuild(ConstructionProcess.CREATION, selectedBuilding);
-                        }
-                    } else {
-                        if(player.haveWorkersAvailable()) {
-                            player.sendWorkersToBuild(ConstructionProcess.UPDATE, selectedBuilding);
-                        }
-                    }
-                }
-
-            } else if (isCreatingANewBuilding) {
-                Building newBuilding = new Building(false, Objects.requireNonNull(ConstructionType.getEnumFromConstant(typeIndexMap.get(typeOption))));
-
-                if (player.checkIfPlayerHasEnoughResources(newBuilding)) {
-                    player.addNewBuilding(newBuilding);
-                    player.sendWorkersToBuild(ConstructionProcess.CREATION, newBuilding);
-                }
-
-            } else {
-                System.out.println("Escolha inválida. Tenta novamente.");
-            }
+            displayBuildingsOfType(player, selectedType);
         } else {
             System.out.println("Escolha inválida. Tenta novamente.");
         }
         player.checkForNewEraConditions();
+    }
+
+    private void displayBuildingsOfType(Player player, String selectedType) {
+        System.out.println("Lista de Edificios " + selectedType + ":");
+        List<Building> playerBuildingsOfType = player.getBuildingsFromConstructionName(selectedType);
+        int index = 1;
+        for (Building building : playerBuildingsOfType) {
+            System.out.print(index + ". ");
+            building.showDetails();
+            index++;
+            if (!player.checkIfBuildingAmountHasReached(building)) {
+                System.out.println(index + ". Create a new " + building.getConstructionTypeName());
+            }
+        }
+
+        System.out.println("Escolhe um edificio para construir ou atualizar: ");
+        int buildingOption = scanner.nextInt();
+        scanner.nextLine();
+
+        boolean isUpdatingAnExistentBuilding = buildingOption > 0 && buildingOption <= playerBuildingsOfType.size();
+        boolean isCreatingANewBuilding = buildingOption == playerBuildingsOfType.size() + 1;
+
+        if (isUpdatingAnExistentBuilding) {
+            Building selectedBuilding = playerBuildingsOfType.get(buildingOption - 1);
+            processSelectedBuilding(player, selectedBuilding);
+        } else if (isCreatingANewBuilding) {
+            Building newBuilding = new Building(false, Objects.requireNonNull(ConstructionType.getEnumFromConstant(selectedType)));
+            processNewBuilding(player, newBuilding);
+        } else {
+            System.out.println("Escolha inválida. Tenta novamente.");
+        }
+    }
+
+    private void processSelectedBuilding(Player player, Building selectedBuilding) {
+        if (player.checkIfPlayerHasEnoughResources(selectedBuilding)) {
+            if (player.isFirstTimeBuilding(selectedBuilding)) {
+                if (player.haveWorkersAvailable()) {
+                    player.sendWorkersToBuild(ConstructionProcess.CREATION, selectedBuilding);
+                }
+            } else {
+                if (player.haveWorkersAvailable()) {
+                    player.sendWorkersToBuild(ConstructionProcess.UPDATE, selectedBuilding);
+                }
+            }
+        }
+    }
+
+    private void processNewBuilding(Player player, Building newBuilding) {
+        if (player.checkIfPlayerHasEnoughResources(newBuilding)) {
+            player.addNewBuilding(newBuilding);
+            player.sendWorkersToBuild(ConstructionProcess.CREATION, newBuilding);
+        }
     }
 }
