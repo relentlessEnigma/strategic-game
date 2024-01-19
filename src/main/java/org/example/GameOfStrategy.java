@@ -39,6 +39,11 @@ public class GameOfStrategy {
     private void startGame(Player player) {
 
         while (true) {
+            try {
+                Thread.sleep(500); // Needed so it wont overlap other console outputs that may be there running
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             showMenu(player);
             int choice = scanner.nextInt();
             scanner.nextLine(); // Limpar o buffer
