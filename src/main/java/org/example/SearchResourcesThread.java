@@ -1,30 +1,27 @@
 package org.example;
 
+import java.util.List;
+import java.util.Random;
+
 public class SearchResourcesThread extends Thread {
 
-    private Resource building;
+    private Resource resource;
     private Worker worker;
-    private int timeToSearch;
+    List<ResourceAmount> resourcesList;
 
-    public SearchResourcesThread(Resource building, Worker worker, int timeToSearch) {
-        this.building = building;
+    public SearchResourcesThread(Resource resource, List<ResourceAmount> resourcesList, Worker worker) {
+        this.resource = resource;
         this.worker = worker;
-        this.timeToSearch = timeToSearch;
+        this.resourcesList = resourcesList;
     }
 
     @Override
     public void run() {
         worker.setOccupied(true);
-        System.out.println("Worker " + worker.getName() + " começou a tarefa:\n" + worker.getCurrentMission() + "\nTermina dentro de " + timeToSearch + " minutos.");
 
-        try {
-            Thread.sleep(timeToSearch);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        resource.search(resourcesList, worker.getName(), worker.getCurrentMission());
 
         worker.setOccupied(false);
-        System.out.println("Worker " + worker.getName() + " terminou a tarefa:\n" + worker.getCurrentMission() + "\n.");
 
         try {
             Thread.sleep(5000);

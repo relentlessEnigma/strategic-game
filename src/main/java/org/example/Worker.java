@@ -12,29 +12,12 @@ class Worker {
     public Worker(String name) {
         this.name = name;
         this.isOccupied = false;
-        this.resourceConsumption = new ResourceAmount(Resource.FOOD, 50);
+        this.resourceConsumption = new ResourceAmount(ResourceType.FOOD, 50);
     }
 
-    public List<ResourceAmount> searchResources(Resource resourceToLook) {
-        currentMission = "    Procurar Recursos: " + resourceToLook.name();
-        System.out.println(getStringWithName() + " está agora em missão:\n" + currentMission);
-        isOccupied = true;
-
-        Random random = new Random();
-        int lowestAmount = 10;
-        int highestAmount = 100;
-
-        int lowestSearchTime = 5000; // miliseconds
-        int highestSearchTime = lowestSearchTime * 5;
-
-        try {
-            Thread.sleep(random.nextInt(lowestSearchTime, highestSearchTime));
-        } catch (java.lang.InterruptedException e) {
-            System.out.println("O trabalhador aleijou-se enquanto procurava resources!!");
-        }
-        isOccupied = false;
-
-        return List.of(new ResourceAmount(resourceToLook, random.nextInt(lowestAmount, highestAmount)));
+    public void searchResources(ResourceType resourceTypeToLook, List<ResourceAmount> resourcesList) {
+        currentMission = String.format("Procurar Recursos: %s\n", resourceTypeToLook.name());
+        new SearchResourcesThread(new Resource(resourceTypeToLook), resourcesList, this).start();
     }
 
     /**
@@ -45,10 +28,9 @@ class Worker {
      * @param construction
      */
     public void makeConstruction(ConstructionProcess constructionProcess, Building construction) {
-        currentMission = constructionProcess.process + " de Edifício: " + construction.getConstructionTypeName();
+        currentMission = String.format("%s de Edifício: %s", constructionProcess.process, construction.getConstructionTypeName());
         if(constructionProcess == ConstructionProcess.CREATION) {
             new ConstructionBuildingThread(construction, this).start();
-            System.out.println("Construção de " + construction.getConstructionTypeName() + " terminada!");
         } else {
             new ConstructionUpdatingThread(construction, this).start();
         }
@@ -71,7 +53,7 @@ class Worker {
     }
 
     public String getStringWithName() {
-        return "Worker " + name;
+        return String.format("Worker %s", name);
     }
 
     public boolean isOccupied() {

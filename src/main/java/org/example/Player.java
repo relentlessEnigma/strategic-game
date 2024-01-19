@@ -14,8 +14,8 @@ class Player {
         this.farmName = farmName;
     }
 
-    public void addResource(Resource resource, int amount) {
-        resources.add(new ResourceAmount(resource, amount));
+    public void addResource(ResourceType resourceType, int amount) {
+        resources.add(new ResourceAmount(resourceType, amount));
     }
 
     public void addEmployee(Worker worker) {
@@ -33,33 +33,6 @@ class Player {
         System.out.println("====================================================================================================================");
     }
 
-    public void searchForResources(Resource resourceToFind) {
-        Optional<Worker> worker = workers.stream().filter(x -> !x.isOccupied()).findFirst();
-
-        if (worker.isPresent()) {
-            List<ResourceAmount> resourcesFound = worker.get().searchResources(resourceToFind);
-
-            if (!resourcesFound.isEmpty()) {
-                Resource resourceFound = resourcesFound.iterator().next().getResource();
-                int quantity = resourcesFound.iterator().next().getAmount();
-
-                for(ResourceAmount x : resources) {
-                    if(x.getResource().name().equals(resourceFound.name())) {
-                        x.setAmount(x.getAmount() + quantity);
-                    }
-                }
-
-                System.out.println("Recurso encontrado: " + resourceFound + ", Quantidade: " + quantity);
-            } else {
-                System.out.println("Nenhum recurso encontrado.");
-            }
-        } else {
-            System.out.println("Todos os seus funcionários estão ocupados com tarefas!");
-            workers.forEach(w -> System.out.println(w.getName() + " atualmente em " +w.getCurrentMission()));
-            System.out.println("Crie mais funcionários.");
-        }
-    }
-
     public void setLevel(int level) {
         this.eraAge = EraAge.setByLevel(level);
         assert eraAge != null;
@@ -71,14 +44,6 @@ class Player {
                     new Building(false, z)
             );
         }
-    }
-
-    public List<ResourceAmount> getResources() {
-        return resources;
-    }
-
-    public void setResources(List<ResourceAmount> resources) {
-        this.resources = resources;
     }
 
     public List<Building> getBuildingList() {
@@ -135,10 +100,13 @@ class Player {
         return building.getLevel() >= building.getMaxLevel();
     }
 
-    public void sendWorkersToBuild(ConstructionProcess process, Building construction) {
-        Optional<Worker> availableWorker = this.workers.stream().filter(x -> !x.isOccupied()).findFirst();
+    public void sendWorkersToConstructionJob(ConstructionProcess process, Building construction) {
         prepareNeededResources(construction);
-        availableWorker.ifPresent(worker -> worker.makeConstruction(process, construction));
+        getWorkerAvailable().makeConstruction(process, construction);
+    }
+
+    public void sendWorkersToSearchJob(ResourceType resourcesToSearch) {
+        getWorkerAvailable().searchResources(resourcesToSearch, resources);
     }
 
     private void prepareNeededResources(Building construction) {
@@ -153,9 +121,16 @@ class Player {
         }
     }
 
-    public boolean haveWorkersAvailable() {
-        Optional<Worker> availableWorker = this.workers.stream().filter(x -> !x.isOccupied()).findFirst();
-        return availableWorker.isPresent();
+    public Worker getWorkerAvailable() {
+        Optional<Worker> worker = workers.stream().filter(x -> !x.isOccupied()).findFirst();
+        if(worker.isPresent()) {
+            return worker.get();
+        } else {
+            System.out.println("Todos os seus funcionários estão ocupados com tarefas!");
+            workers.forEach(w -> System.out.println(w.getName() + " atualmente em " +w.getCurrentMission()));
+            System.out.println("Crie mais funcionários.");
+            return null;
+        }
     }
 
     public void checkForNewEraConditions() {

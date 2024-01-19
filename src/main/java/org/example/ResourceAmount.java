@@ -3,20 +3,20 @@ package org.example;
 import java.util.Objects;
 
 public class ResourceAmount {
-    private Resource resource;
+    private ResourceType resourceType;
     private int amount;
 
-    public ResourceAmount(Resource resource, int amount) {
-        this.resource = resource;
+    public ResourceAmount(ResourceType resourceType, int amount) {
+        this.resourceType = resourceType;
         this.amount = amount;
     }
 
-    public Resource getResource() {
-        return resource;
+    public ResourceType getResource() {
+        return resourceType;
     }
 
-    public void setResource(Resource resource) {
-        this.resource = resource;
+    public void setResource(ResourceType resourceType) {
+        this.resourceType = resourceType;
     }
 
     public int getAmount() {
@@ -32,18 +32,18 @@ public class ResourceAmount {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ResourceAmount that = (ResourceAmount) o;
-        return amount == that.amount && resource == that.resource;
+        return amount == that.amount && resourceType == that.resourceType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resource, amount);
+        return Objects.hash(resourceType, amount);
     }
 
     @Override
     public String toString() {
         return "ResourceAmount{" +
-                "resource=" + resource +
+                "resource=" + resourceType +
                 ", amount=" + amount +
                 '}';
     }

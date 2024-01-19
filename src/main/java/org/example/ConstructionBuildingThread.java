@@ -18,7 +18,7 @@ public class ConstructionBuildingThread extends Thread {
         building.build();
 
         worker.setOccupied(false);
-        System.out.println("Worker " + worker.getName() + " terminou a tarefa:\n" + worker.getCurrentMission() + "\n.");
+        System.out.printf("Worker %s terminou a tarefa:\n %s", worker.getName(), worker.getCurrentMission());
 
         try {
             Thread.sleep(5000);
