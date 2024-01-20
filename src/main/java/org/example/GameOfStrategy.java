@@ -80,8 +80,8 @@ public class GameOfStrategy {
         System.out.println("Lista de Recursos:");
 
         int index = 1;
-        for(ResourceType x : ResourceType.values()) {
-            System.out.printf("%d. %s\n", index, x.name());
+        for(ResourceType resource : ResourceType.values()) {
+            System.out.printf("%d. %s\n", index, resource.name);
             index++;
         }
         int input = scanner.nextInt();
@@ -125,7 +125,7 @@ public class GameOfStrategy {
             building.showDetails();
             index++;
             if (!player.checkIfBuildingAmountHasReached(building)) {
-                System.out.printf("%d Create a new %s", index, building.getConstructionTypeName());
+                System.out.printf("%d Create a new %s\n", index, building.getConstructionTypeName());
             }
         }
 

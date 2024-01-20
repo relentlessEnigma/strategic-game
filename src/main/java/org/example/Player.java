@@ -127,7 +127,6 @@ class Player {
             return worker.get();
         } else {
             System.out.println("Todos os seus funcionários estão ocupados com tarefas!");
-            workers.forEach(w -> System.out.println(w.getName() + " atualmente em " +w.getCurrentMission()));
             System.out.println("Crie mais funcionários.");
             return null;
         }

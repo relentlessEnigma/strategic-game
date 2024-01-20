@@ -16,7 +16,7 @@ class Worker {
     }
 
     public void searchResources(ResourceType resourceTypeToLook, List<ResourceAmount> resourcesList) {
-        currentMission = String.format("Procurar Recursos: %s\n", resourceTypeToLook.name());
+        currentMission = String.format("procurar recursos: %s\n", resourceTypeToLook.name);
         new SearchResourcesThread(new Resource(resourceTypeToLook), resourcesList, this).start();
     }
 

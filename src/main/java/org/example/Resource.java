@@ -74,7 +74,7 @@ public class Resource {
         int totalSearchTime = random.nextInt(lowestSearchTime, timeLimitForSearch);
         int lowestAmountToBeFound = random.nextInt(1, amountMaxToBeFound/2);
 
-        System.out.printf("O %s começou a tarefa: %s\nTermina dentro de %d minutos.\n", workerName, currentMission, totalSearchTime/(60*1000));
+        System.out.printf("O %s começou a tarefa de %s\nTermina dentro de %d minutos.\n", workerName, currentMission, totalSearchTime/(60*1000));
 
         try {
             Thread.sleep(totalSearchTime);
