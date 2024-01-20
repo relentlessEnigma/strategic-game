@@ -17,20 +17,14 @@ public class GameOfStrategy {
         String farmName = scanner.nextLine();
         Player player = new Player(farmName);
 
-        player.addResource(ResourceType.POPULATION, 3);
-        player.addResource(ResourceType.GOLD, 50);
-        player.addResource(ResourceType.FOOD, 200);
-        player.addResource(ResourceType.WATER, 100);
-        player.addResource(ResourceType.WOOD, 150);
-        player.addResource(ResourceType.SILVER, 0);
-        player.addResource(ResourceType.IRON, 0);
-        player.addResource(ResourceType.GRAPES, 0);
+        ResourceType.getResourcesPackBasedOnCurrentEra(player.getEraAge().getLevel()).stream().forEach(
+                resource -> player.addResource(resource, resource.getInitialOffer())
+        );
 
-        player.addEmployee(new Worker("João"));
-        player.addEmployee(new Worker("Maria"));
-        player.addEmployee(new Worker("Pedro"));
+        player.addEmployee(new Worker("worker1"));
+        player.addEmployee(new Worker("worker2"));
+        player.addEmployee(new Worker("worker3"));
 
-        player.setLevel(1);
 
         return player;
     }
@@ -39,7 +33,7 @@ public class GameOfStrategy {
 
         while (true) {
             try {
-                Thread.sleep(500); // Needed so it wont overlap other console outputs that may be there running
+                Thread.sleep(500); // Needed so it won't overlap other console outputs that may be there running
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

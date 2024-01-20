@@ -12,6 +12,7 @@ class Player {
 
     public Player(String farmName) {
         this.farmName = farmName;
+        this.setLevel(1);
     }
 
     public void addResource(ResourceType resourceType, int amount) {
@@ -24,13 +25,21 @@ class Player {
 
     public void showResourcesHeader() {
         System.out.println("====================================================================================================================");
-        System.out.println("Era do Jogador: " + eraAge.getEraName());
+        System.out.println(eraAge.getEraName());
         for (ResourceAmount entry : resources) {
-            System.out.printf("%s: %d", entry.getResource().name(), entry.getAmount());
+            System.out.printf("%s: %d", entry.getResource().name, entry.getAmount());
             System.out.print("   *   ");
         }
         System.out.println();
         System.out.println("====================================================================================================================");
+    }
+
+    public EraAge getEraAge() {
+        return eraAge;
+    }
+
+    public void setEraAge(EraAge eraAge) {
+        this.eraAge = eraAge;
     }
 
     public void setLevel(int level) {
