@@ -131,7 +131,6 @@ class PlayerService {
             }
         }
 
-        System.out.println("Não tens recursos suficientes!");
         return hasResourcesAvailable;
     }
 

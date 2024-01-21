@@ -146,6 +146,8 @@ public class GameOfStrategy {
                     playerService.sendWorkersToConstructionJob(ConstructionProcess.UPDATE, selectedBuilding);
                 }
             }
+        } else {
+            System.out.println("Não tens recursos suficientes!");
         }
     }
 
@@ -153,6 +155,8 @@ public class GameOfStrategy {
         if (playerService.checkIfPlayerHasEnoughResources(newBuilding)) {
             playerService.addNewBuilding(newBuilding);
             playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, newBuilding);
+        } else {
+            System.out.println("Não tens recursos suficientes!");
         }
     }
 }
