@@ -1,40 +1,48 @@
-package org.example;
+package org.example.entities;
 
+import org.example.ThreadUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-enum ResourceType {
+public enum ResourceType {
     WOOD(
-            // Name of the Resource
+            // Description of the Resource
             "Madeira",
             // Initial Offer given
             100,
             // Difficulty, it means there can be enemies around and kill the worker
             Difficulty.EASY,
             // Convert to Minutes (60 * 1000)
-            toMinutes(5), 100, 2),
-    WATER("Água", 200, Difficulty.EASY, toMinutes(3), 100,1),
-    FOOD("Comida", 100, Difficulty.EASY, toMinutes(7), 100,3),
-    STONE("Pedra", 10, Difficulty.EASY, toMinutes(10), 70,4),
-    IRON("Ferro", 0, Difficulty.MEDIUM, toMinutes(15), 62,10),
-    SILVER("Prata", 0, Difficulty.MEDIUM, toMinutes(20), 43,8),
-    GRAPES("Uvas", 0, Difficulty.MEDIUM, toMinutes(15), 32,7),
-    POPULATION("População", 3, Difficulty.HARD, toMinutes(30), 2,0),
-    GOLD("Ouro", 0, Difficulty.EXTREME, toMinutes(30), 8, 50),
-    FAVOR("Favor aos Deuses", 0, Difficulty.EXTREME, toMinutes(30), 8,0)
+            ThreadUtils.toMinutes(5), 100, 2),
+    POPULATION("População", 3, Difficulty.HARD, ThreadUtils.toMinutes(30), 2,0),
+    WATER("Água", 200, Difficulty.EASY, ThreadUtils.toMinutes(3), 100,1),
+    FOOD("Comida", 100, Difficulty.EASY, ThreadUtils.toMinutes(7), 100,3),
+    STONE("Pedra", 10, Difficulty.EASY, ThreadUtils.toMinutes(10), 70,4),
+    IRON("Ferro", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(15), 62,10),
+    SILVER("Prata", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(20), 43,8),
+    GRAPES("Uvas", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(15), 32,7),
+    GOLD("Ouro", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8, 50),
+    FAVOR("Favor aos Deuses", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8,0)
     ;
 
-    String name;
+    String description;
     Difficulty hardToGet;
     int timeLimitForSearch;
     int amountMaxToBeFound;
     int pricePerUnit;
     int initialOffer;
 
-    ResourceType(String name, int initialOffer, Difficulty hardToGet, int timeLimitForSearch, int amountMaxToBeFound, int pricePerUnit) {
-        this.name = name;
+    ResourceType(
+            String description,
+            int initialOffer,
+            Difficulty hardToGet,
+            int timeLimitForSearch,
+            int amountMaxToBeFound,
+            int pricePerUnit
+    ) {
+        this.description = description;
         this.hardToGet = hardToGet;
         this.timeLimitForSearch = timeLimitForSearch;
         this.amountMaxToBeFound = amountMaxToBeFound;
@@ -50,16 +58,12 @@ enum ResourceType {
         this.initialOffer = initialOffer;
     }
 
-    public static int toMinutes(int number) {
-        return number * 60 * 1000;
+    public String getDescription() {
+        return description;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Difficulty getHardToGet() {
@@ -95,7 +99,7 @@ enum ResourceType {
     }
 
     public static List<ResourceType> getResourcesPackBasedOnCurrentEra(int currentEraLevel) {
-        EraAge currentEra = EraAge.setByLevel(currentEraLevel);
+        EraAge currentEra = EraAge.getByLevel(currentEraLevel);
         List<ResourceType> resourcesPack = new ArrayList<>();
 
         switch (Objects.requireNonNull(currentEra)) {

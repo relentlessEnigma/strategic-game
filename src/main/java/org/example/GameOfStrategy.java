@@ -1,55 +1,47 @@
 package org.example;
 
+import org.example.entities.*;
+
 import java.util.*;
 
 public class GameOfStrategy {
     private static Scanner scanner = new Scanner(System.in);
 
     public void start() {
-        Player player = createPlayer();
+        PlayerService playerService = createPlayer();
         ConsoleUtils.clearConsole();
-        startGame(player);
+        startGame(playerService);
     }
 
-    private Player createPlayer() {
+    private PlayerService createPlayer() {
         System.out.println("Escolhe um nome para a tua aldeia: ");
 
         String farmName = scanner.nextLine();
-        Player player = new Player(farmName);
-
-        ResourceType.getResourcesPackBasedOnCurrentEra(player.getEraAge().getLevel()).stream().forEach(
-                resource -> player.addResource(resource, resource.getInitialOffer())
-        );
-
-        player.addEmployee(new Worker("worker1"));
-        player.addEmployee(new Worker("worker2"));
-        player.addEmployee(new Worker("worker3"));
-
-
-        return player;
+        PlayerService playerService = new PlayerService(new Player(farmName));
+        return playerService;
     }
 
-    private void startGame(Player player) {
+    private void startGame(PlayerService playerService) {
 
         while (true) {
             try {
-                Thread.sleep(500); // Needed so it won't overlap other console outputs that may be there running
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            showMenu(player);
+            showMenu(playerService);
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Limpar o buffer
+            scanner.nextLine();
 
             ConsoleUtils.clearConsole();
-            player.showResourcesHeader();
+            playerService.showResourcesHeader();
 
             switch (choice) {
                 case 1:
-                    displayResourcesAvailableToSearchFor(player);
+                    displayResourcesAvailableToSearchFor(playerService);
                     break;
                 case 2:
-                    displayBuildingTypes(player);
+                    displayBuildingTypes(playerService);
                     break;
                 case 0:
                     System.out.println("Obrigado por jogar!");
@@ -60,8 +52,8 @@ public class GameOfStrategy {
         }
     }
 
-    private void showMenu(Player player) {
-        player.showResourcesHeader();
+    private void showMenu(PlayerService playerService) {
+        playerService.showResourcesHeader();
         System.out.println("Menu:");
         System.out.println("1. Procurar por recursos");
         System.out.println("2. Construir/Atualizar edifícios");
@@ -70,26 +62,28 @@ public class GameOfStrategy {
         System.out.print("Escolhe uma opção: ");
     }
 
-    private void displayResourcesAvailableToSearchFor(Player player) {
+    private void displayResourcesAvailableToSearchFor(PlayerService playerService) {
         System.out.println("Lista de Recursos:");
 
         int index = 1;
-        for(ResourceType resource : ResourceType.values()) {
-            System.out.printf("%d. %s\n", index, resource.name);
+        List<ResourceType> availableResources = BuildingAndResourceAvailabilityPerLevel.getByLevel(playerService.getPlayer().getEraAge().getLevel()).getAvailableResources();
+        for(ResourceType ct : availableResources) {
+            System.out.printf("%d. %s\n", index, ct.getDescription());
             index++;
         }
+
         int input = scanner.nextInt();
-        if(player.getWorkerAvailable() != null) {
-            player.sendWorkersToSearchJob(ResourceType.values()[input-1]);
+        if(playerService.getWorkerAvailable() != null) {
+            playerService.sendWorkersToSearchJob(availableResources.get(input-1));
         }
     }
 
-    private void displayBuildingTypes(Player player) {
+    private void displayBuildingTypes(PlayerService playerService) {
         System.out.println("Lista de Edificios:");
 
         int index = 1;
         Map<Integer, String> typeIndexMap = new HashMap<>();
-        for (String constructionType : player.getAvailableConstructionTypes()) {
+        for (String constructionType : playerService.getAvailableConstructionTypes()) {
             System.out.println(index + ". " + constructionType);
             typeIndexMap.put(index++, constructionType);
         }
@@ -99,26 +93,26 @@ public class GameOfStrategy {
         scanner.nextLine();
 
         ConsoleUtils.clearConsole();
-        player.showResourcesHeader();
+        playerService.showResourcesHeader();
 
         if (typeOption > 0 && typeOption < index) {
             String selectedType = typeIndexMap.get(typeOption);
-            displayBuildingsOfType(player, selectedType);
-        } else {
+            displayBuildingsOfType(playerService, selectedType);
+        } else { // Limpar o buffer
             System.out.println("Escolha inválida. Tenta novamente.");
         }
-        player.checkForNewEraConditions();
+        playerService.checkForNewEraConditions();
     }
 
-    private void displayBuildingsOfType(Player player, String selectedType) {
-        System.out.printf("Lista de Edificios %s:", selectedType);
-        List<Building> playerBuildingsOfType = player.getBuildingsFromConstructionName(selectedType);
+    private void displayBuildingsOfType(PlayerService playerService, String selectedType) {
+        System.out.printf("Lista de Edificios %s:\n", selectedType);
+        List<Building> playerBuildingsOfType = playerService.getBuildingsFromConstructionName(selectedType);
         int index = 1;
         for (Building building : playerBuildingsOfType) {
             System.out.print(index + ". ");
             building.showDetails();
             index++;
-            if (!player.checkIfBuildingAmountHasReached(building)) {
+            if (!playerService.checkIfBuildingAmountHasReached(building)) {
                 System.out.printf("%d Create a new %s\n", index, building.getConstructionTypeName());
             }
         }
@@ -132,33 +126,33 @@ public class GameOfStrategy {
 
         if (isUpdatingAnExistentBuilding) {
             Building selectedBuilding = playerBuildingsOfType.get(buildingOption - 1);
-            processSelectedBuilding(player, selectedBuilding);
+            processSelectedBuilding(playerService, selectedBuilding);
         } else if (isCreatingANewBuilding) {
             Building newBuilding = new Building(false, Objects.requireNonNull(ConstructionType.getEnumFromConstant(selectedType)));
-            processNewBuilding(player, newBuilding);
+            processNewBuilding(playerService, newBuilding);
         } else {
             System.out.println("Escolha inválida. Tenta novamente.");
         }
     }
 
-    private void processSelectedBuilding(Player player, Building selectedBuilding) {
-        if (player.checkIfPlayerHasEnoughResources(selectedBuilding)) {
-            if (player.isFirstTimeBuilding(selectedBuilding)) {
-                if (player.getWorkerAvailable() != null) {
-                    player.sendWorkersToConstructionJob(ConstructionProcess.CREATION, selectedBuilding);
+    private void processSelectedBuilding(PlayerService playerService, Building selectedBuilding) {
+        if (playerService.checkIfPlayerHasEnoughResources(selectedBuilding)) {
+            if (playerService.isFirstTimeBuilding(selectedBuilding)) {
+                if (playerService.getWorkerAvailable() != null) {
+                    playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, selectedBuilding);
                 }
             } else {
-                if (player.getWorkerAvailable() != null) {
-                    player.sendWorkersToConstructionJob(ConstructionProcess.UPDATE, selectedBuilding);
+                if (playerService.getWorkerAvailable() != null) {
+                    playerService.sendWorkersToConstructionJob(ConstructionProcess.UPDATE, selectedBuilding);
                 }
             }
         }
     }
 
-    private void processNewBuilding(Player player, Building newBuilding) {
-        if (player.checkIfPlayerHasEnoughResources(newBuilding)) {
-            player.addNewBuilding(newBuilding);
-            player.sendWorkersToConstructionJob(ConstructionProcess.CREATION, newBuilding);
+    private void processNewBuilding(PlayerService playerService, Building newBuilding) {
+        if (playerService.checkIfPlayerHasEnoughResources(newBuilding)) {
+            playerService.addNewBuilding(newBuilding);
+            playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, newBuilding);
         }
     }
 }

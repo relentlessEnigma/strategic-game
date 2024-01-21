@@ -1,33 +1,69 @@
 package org.example;
 
+import org.example.entities.*;
+
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class Player {
-    private String farmName;
-    private EraAge eraAge;
+class PlayerService {
+    private Player player;
     private List<ResourceAmount> resources = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
     private List<Building> buildingList = new ArrayList<>();
 
-    public Player(String farmName) {
-        this.farmName = farmName;
+    public PlayerService(Player player) {
+        this.player = player;
+        workers.add(new Worker("worker1"));
+        workers.add(new Worker("worker2"));
+        workers.add(new Worker("worker3"));
         this.setLevel(1);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public List<Worker> getWorkers() {
+        return workers;
+    }
+
+    public void setWorkers(List<Worker> workers) {
+        this.workers = workers;
+    }
+
+    public List<ResourceAmount> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<ResourceAmount> resources) {
+        this.resources = resources;
     }
 
     public void addResource(ResourceType resourceType, int amount) {
         resources.add(new ResourceAmount(resourceType, amount));
     }
 
-    public void addEmployee(Worker worker) {
-        workers.add(worker);
+    public void addWorker(Worker worker) {
+        for(ResourceAmount x : resources) {
+            if(x.getResource() == ResourceType.POPULATION) {
+                if(x.getAmount() < workers.size()) {
+                    workers.add(worker);
+                }
+                System.out.println("Chegaste ao limite de trabalhadores!");
+            }
+        }
     }
 
     public void showResourcesHeader() {
         System.out.println("====================================================================================================================");
-        System.out.println(eraAge.getEraName());
+        System.out.println(player.getEraAge().getEraName());
         for (ResourceAmount entry : resources) {
-            System.out.printf("%s: %d", entry.getResource().name, entry.getAmount());
+            System.out.printf("%s: %d", entry.getResource().getDescription(), entry.getAmount());
             System.out.print("   *   ");
         }
         System.out.println();
@@ -35,24 +71,36 @@ class Player {
     }
 
     public EraAge getEraAge() {
-        return eraAge;
+        return player.getEraAge();
     }
 
     public void setEraAge(EraAge eraAge) {
-        this.eraAge = eraAge;
+        this.player.setEraAge(eraAge);
     }
 
     public void setLevel(int level) {
-        this.eraAge = EraAge.setByLevel(level);
-        assert eraAge != null;
+        player.setEraAge(EraAge.getByLevel(level));
+        System.out.println("Descoberta Uma Nova ERA! A Era da " + player.getEraAge().getEraName());
 
-        System.out.println("Descoberta Uma Nova ERA! A Era da " + eraAge.getEraName());
-        List<ConstructionType> x = AvailableBuildings.valueOf("LEVEL_" + eraAge.getLevel()).getConstructionsList();
-        for(ConstructionType z : x) {
-            buildingList.add(
-                    new Building(false, z)
-            );
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+
+        BuildingAndResourceAvailabilityPerLevel availability = BuildingAndResourceAvailabilityPerLevel
+                .getByLevel(player.getEraAge().getLevel());
+        
+        List<ConstructionType> availableConstructions = availability.getAvailableConstructions();
+        List<ResourceType> availableResourceTypes = availability.getAvailableResources();
+
+        buildingList.addAll(availableConstructions.stream()
+                .map(constructionType -> new Building(false, constructionType))
+                .toList());
+
+        resources.addAll(availableResourceTypes.stream()
+                .map(resourceType -> new ResourceAmount(resourceType, resourceType.getInitialOffer()))
+                .toList());
     }
 
     public List<Building> getBuildingList() {
@@ -73,19 +121,18 @@ class Player {
 
     public boolean checkIfPlayerHasEnoughResources(Building building) {
         List<ResourceAmount> requiredResources = building.getResourceCost();
+        Boolean hasResourcesAvailable = false;
 
         for (ResourceAmount buildingResource : requiredResources) {
             for (ResourceAmount playerResource : resources) {
                 if(playerResource.getResource() == buildingResource.getResource()) {
-                    if(playerResource.getAmount() >= buildingResource.getAmount()) {
-                        return true;
-                    }
+                    hasResourcesAvailable = playerResource.getAmount() >= buildingResource.getAmount();
                 }
             }
         }
 
         System.out.println("Não tens recursos suficientes!");
-        return false;
+        return hasResourcesAvailable;
     }
 
     public void addNewBuilding(Building newBuilding) {
@@ -111,7 +158,7 @@ class Player {
 
     public void sendWorkersToConstructionJob(ConstructionProcess process, Building construction) {
         prepareNeededResources(construction);
-        getWorkerAvailable().makeConstruction(process, construction);
+        getWorkerAvailable().makeConstruction(process, construction, resources, workers);
     }
 
     public void sendWorkersToSearchJob(ResourceType resourcesToSearch) {
@@ -142,7 +189,7 @@ class Player {
     }
 
     public void checkForNewEraConditions() {
-        int nextLevel = eraAge.getNextLevel().getLevel();
+        int nextLevel = player.getEraAge().getNextLevel().getLevel();
         if(buildingList.stream().allMatch(x -> x.getLevel() == nextLevel-1)) {
             setLevel(nextLevel);
         }

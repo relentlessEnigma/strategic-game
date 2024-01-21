@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.entities.ResourceType;
 import java.util.Objects;
 
 public class ResourceAmount {

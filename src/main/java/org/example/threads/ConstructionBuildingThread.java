@@ -1,13 +1,24 @@
-package org.example;
+package org.example.threads;
+
+import org.example.Building;
+import org.example.ConsoleUtils;
+import org.example.ResourceAmount;
+import org.example.entities.Worker;
+
+import java.util.List;
 
 public class ConstructionBuildingThread extends Thread {
 
     private Building building;
     private Worker worker;
+    private List<ResourceAmount> playerResources;
+    private List<Worker> playerWorkersList;
 
-    public ConstructionBuildingThread(Building building, Worker worker) {
+    public ConstructionBuildingThread(Building building, Worker worker, List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
         this.building = building;
         this.worker = worker;
+        this.playerResources = playerResources;
+        this.playerWorkersList = playerWorkersList;
     }
 
     @Override
@@ -15,13 +26,13 @@ public class ConstructionBuildingThread extends Thread {
         worker.setOccupied(true);
         System.out.println("Worker " + worker.getName() + " começou a tarefa:\n" + worker.getCurrentMission() + "\nTermina dentro de " + building.getConstructionMinutes() + " minutos.");
 
-        building.build();
+        building.build(playerResources, playerWorkersList);
 
         worker.setOccupied(false);
         System.out.printf("Worker %s terminou a tarefa:\n %s", worker.getName(), worker.getCurrentMission());
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

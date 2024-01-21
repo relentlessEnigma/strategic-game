@@ -1,4 +1,6 @@
-package org.example;
+package org.example.entities;
+
+import java.util.Arrays;
 
 public enum EraAge {
     STONE_AGE("Idade da Pedra", 1),
@@ -19,13 +21,11 @@ public enum EraAge {
         this.level = level;
     }
 
-    public static EraAge setByLevel(int level) {
-        for (EraAge eraAge : EraAge.values()) {
-            if (eraAge.level == level) {
-                return eraAge;
-            }
-        }
-        return null;
+    public static EraAge getByLevel(int level) {
+        return Arrays.stream(EraAge.values())
+                .filter(eraAge -> eraAge.getLevel() == level)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid level"));
     }
 
     public String getEraName() {

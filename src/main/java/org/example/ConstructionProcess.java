@@ -10,4 +10,12 @@ public enum ConstructionProcess {
     ConstructionProcess(String process) {
         this.process = process;
     }
+
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
 }

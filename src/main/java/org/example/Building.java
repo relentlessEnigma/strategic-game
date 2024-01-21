@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.entities.ConstructionType;
+import org.example.entities.Worker;
+import org.example.threads.ResourceGeneratorThread;
 import java.util.List;
 
 public class Building {
@@ -12,6 +15,7 @@ public class Building {
     private int constructionMinutes;
     private List<ResourceAmount> resourceCost;
     private List<ResourceAmount> resourceProduction;
+    private int timeForProduction;
 
     public Building(Boolean isBuilded, ConstructionType constructionType) {
         this.isBuilded = isBuilded;
@@ -22,9 +26,10 @@ public class Building {
         this.amountConstructionsAllowed = constructionType.getAmountConstructionsAllowed();
         this.resourceCost = constructionType.getBaseResourcesCost();
         this.maxLevel = constructionType.getMaxLevel();
+        this.timeForProduction = constructionType.getBaseConstructionTime();
     }
 
-    public void build() {
+    public void build(List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
         if(amountConstructionsAllowed > 0) {
             System.out.println("A retirar recursos necessários do teu inventário...");
             try {
@@ -37,6 +42,8 @@ public class Building {
             level = 1;
             isBuilded = true;
             increaseResourceCost();
+            startThreadForProductions(playerResources, playerWorkersList);
+
         } else {
             System.out.println("Já construiste o máximo deste tipo de edificio");
         }
@@ -59,6 +66,13 @@ public class Building {
         }
     }
 
+    public void startThreadForProductions(List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
+        boolean hasConstructionProductions = timeForProduction > 0;
+        if(hasConstructionProductions) {
+            new ResourceGeneratorThread(this, playerResources, playerWorkersList).start();
+        }
+    }
+
     private void increaseResourceCost() {
         for (ResourceAmount resourceAmount : resourceCost) {
             int baseAmount = resourceAmount.getAmount();
@@ -78,7 +92,7 @@ public class Building {
         System.out.println("-----------------------------------------------");
         System.out.println("Custo de recursos para construção:");
         for (ResourceAmount resourceAmount : resourceCost) {
-            System.out.printf("%-10s: %d%n", resourceAmount.getResource(), resourceAmount.getAmount());
+            System.out.printf("%-10s: %d%n", resourceAmount.getResource().getDescription(), resourceAmount.getAmount());
         }
 
         System.out.println("Tempo de construção: " + constructionMinutes + " minutos");
@@ -94,7 +108,6 @@ public class Building {
         System.out.println("-----------------------------------------------");
     }
 
-
     public Boolean getBuilded() {
         return isBuilded;
     }
@@ -104,7 +117,7 @@ public class Building {
     }
 
     public int getConstructionTimeInMils() {
-        return constructionMinutes * 60000;
+        return ThreadUtils.toMinutes(constructionMinutes);
     }
 
     public void setConstructionMinutes(int constructionMinutes) {

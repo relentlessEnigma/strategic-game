@@ -1,57 +1,58 @@
-package org.example;
+package org.example.entities;
 
+import org.example.ResourceAmount;
+import org.example.ThreadUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-enum ConstructionType {
-    TOWN_CENTER("Town Center", 10, 2, 10,
+public enum ConstructionType {
+    TOWN_CENTER("Cidade Central", 10, 2, 10,
             List.of(
-                    new ResourceAmount(ResourceType.FOOD, 200),
-                    new ResourceAmount(ResourceType.GOLD, 50),
-                    new ResourceAmount(ResourceType.WOOD, 150)
+                    new ResourceAmount(ResourceType.FOOD, 100),
+                    new ResourceAmount(ResourceType.WATER, 120),
+                    new ResourceAmount(ResourceType.WOOD, 140)
             ),
             List.of(
                     new ResourceAmount(ResourceType.POPULATION, 2)
-            )
+            ), ThreadUtils.toMinutes(7)
     ),
-    LUMBER_CAMP("Lumber Camp", 2, 5, 2,
+    LUMBER_CAMP("Madeireira", 2, 5, 2,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 50),
-                    new ResourceAmount(ResourceType.GOLD, 0),
-                    new ResourceAmount(ResourceType.WOOD, 100),
-                    new ResourceAmount(ResourceType.STONE, 25)
+                    new ResourceAmount(ResourceType.WOOD, 100)
             ),
             List.of(
                     new ResourceAmount(ResourceType.WOOD, 5)
-            )
+            ), ThreadUtils.toMinutes(2)
     ),
-    MILL("Mill", 2,5, 2,
+    MILL("Moinho", 2,5, 2,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 40),
-                    new ResourceAmount(ResourceType.GOLD, 0),
-                    new ResourceAmount(ResourceType.WOOD, 80),
-                    new ResourceAmount(ResourceType.STONE, 20)
+                    new ResourceAmount(ResourceType.WATER, 150),
+                    new ResourceAmount(ResourceType.WOOD, 80)
             ),
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 5)
-            )
+            ), ThreadUtils.toMinutes(2)
     ),
-    HOUSE("House", 2,10, 1,
+    HOUSE("Casa", 2,10, 1,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 30),
-                    new ResourceAmount(ResourceType.GOLD, 10),
                     new ResourceAmount(ResourceType.WOOD, 60)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(5)
     ),
-    BARRACKS("Barracks", 2,5, 4,
+    BARRACKS("Barracas", 2,5, 4,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 60),
-                    new ResourceAmount(ResourceType.GOLD, 30),
-                    new ResourceAmount(ResourceType.WOOD, 120)
+                    new ResourceAmount(ResourceType.WATER, 130),
+                    new ResourceAmount(ResourceType.WOOD, 120),
+                    new ResourceAmount(ResourceType.STONE, 180)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(0)
     ),
     ARCHERY_RANGE("Archery Range", 2,5, 5,
             List.of(
@@ -59,7 +60,8 @@ enum ConstructionType {
                     new ResourceAmount(ResourceType.GOLD, 40),
                     new ResourceAmount(ResourceType.WOOD, 150)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(0)
     ),
     STABLE("Stable", 2,3, 7,
             List.of(
@@ -68,7 +70,8 @@ enum ConstructionType {
                     new ResourceAmount(ResourceType.WOOD, 180),
                     new ResourceAmount(ResourceType.IRON, 20)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(0)
     ),
     MARKET("Market", 2,3, 5,
             List.of(
@@ -78,8 +81,8 @@ enum ConstructionType {
                     new ResourceAmount(ResourceType.STONE, 30)
             ),
             List.of(
-                    new ResourceAmount(ResourceType.FOOD, 5)
-            )
+                    new ResourceAmount(ResourceType.FOOD, 0)
+            ), ThreadUtils.toMinutes(0)
     ),
     BLACKSMITH("Blacksmith", 2,3, 6,
             List.of(
@@ -88,7 +91,8 @@ enum ConstructionType {
                     new ResourceAmount(ResourceType.WOOD, 100),
                     new ResourceAmount(ResourceType.IRON, 40)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(0)
     ),
     MONASTERY("Monastery", 2,1, 8,
             List.of(
@@ -97,7 +101,8 @@ enum ConstructionType {
                     new ResourceAmount(ResourceType.WOOD, 150),
                     new ResourceAmount(ResourceType.STONE, 50)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(0)
     ),
     UNIVERSITY("University", 2,1, 10,
             List.of(
@@ -107,7 +112,8 @@ enum ConstructionType {
                     new ResourceAmount(ResourceType.STONE, 80),
                     new ResourceAmount(ResourceType.IRON, 30)
             ),
-            Collections.emptyList()
+            Collections.emptyList(),
+            ThreadUtils.toMinutes(0)
     ),
     FARM("Farm", 2,5, 3,
             List.of(
@@ -118,9 +124,9 @@ enum ConstructionType {
             ),
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 5)
-            )
+            ), ThreadUtils.toMinutes(0)
     ),
-    WINERY("Winery", 2,2, 6,
+    WINERY("Vinharia", 2,2, 6,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 80),
                     new ResourceAmount(ResourceType.GOLD, 40),
@@ -129,9 +135,9 @@ enum ConstructionType {
             ),
             List.of(
                     new ResourceAmount(ResourceType.GRAPES, 5)
-            )
+            ), ThreadUtils.toMinutes(0)
     ),
-    DOCK("Dock", 2,3, 5,
+    DOCK("Docas", 2,3, 5,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 70),
                     new ResourceAmount(ResourceType.GOLD, 20),
@@ -140,9 +146,9 @@ enum ConstructionType {
             ),
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 5)
-            )
+            ), ThreadUtils.toMinutes(0)
     ),
-    TEMPLE("Temple", 2,1, 9,
+    TEMPLE("Templo", 2,1, 9,
             List.of(
                     new ResourceAmount(ResourceType.FOOD, 100),
                     new ResourceAmount(ResourceType.GOLD, 60),
@@ -152,25 +158,52 @@ enum ConstructionType {
             ),
             List.of(
                     new ResourceAmount(ResourceType.FAVOR, 2)
-            )
+            ), ThreadUtils.toMinutes(0)
     ),
     ;
 
-    private final String name;
+    private String name;
     private int amountConstructionsAllowed;
     private final int maxLevel;
     private final int baseConstructionTime;
-    final List<ResourceAmount> baseResourcesCost;
-    final List<ResourceAmount> baseResourcesProduction;
+    private List<ResourceAmount> baseResourcesCost;
+    private List<ResourceAmount> baseResourcesProduction;
+    private int baseProductionType;
 
-    ConstructionType(String name, int maxLevel, int amountConstructionsAllowed, int baseConstructionTime, List<ResourceAmount> baseResourcesCost, List<ResourceAmount> baseResourcesProduction) {
+    ConstructionType(
+            String name,
+            int maxLevel,
+            int amountConstructionsAllowed,
+            int baseConstructionTime,
+            List<ResourceAmount> baseResourcesCost,
+            List<ResourceAmount> baseResourcesProduction,
+            int baseProductionType
+    ) {
         this.name = name;
         this.maxLevel = maxLevel;
         this.amountConstructionsAllowed = amountConstructionsAllowed;
         this.baseConstructionTime = baseConstructionTime;
         this.baseResourcesCost = baseResourcesCost;
         this.baseResourcesProduction = baseResourcesProduction;
+        this.baseProductionType = baseProductionType;
     }
+
+    public void setBaseResourcesCost(List<ResourceAmount> baseResourcesCost) {
+        this.baseResourcesCost = baseResourcesCost;
+    }
+
+    public void setBaseResourcesProduction(List<ResourceAmount> baseResourcesProduction) {
+        this.baseResourcesProduction = baseResourcesProduction;
+    }
+
+    public int getBaseProductionType() {
+        return baseProductionType;
+    }
+
+    public void setBaseProductionType(int baseProductionType) {
+        this.baseProductionType = baseProductionType;
+    }
+
     public String getName() {
         return name;
     }
