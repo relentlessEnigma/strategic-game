@@ -2,56 +2,44 @@ package org.hsh.games.aoe.threads;
 
 import org.hsh.games.aoe.Building;
 import org.hsh.games.aoe.ResourceAmount;
-import org.hsh.games.aoe.ThreadUtils;
 import org.hsh.games.aoe.entities.ResourceType;
 import org.hsh.games.aoe.entities.Worker;
-
 import java.util.List;
 
 public class ResourceGeneratorThread extends Thread {
-    private Building building;
+    private final Building building;
+    private final List<ResourceAmount> playerResources;
     private long sleepDuration;
-    private List<ResourceAmount> playerResources;
-    private List<Worker> playerWorkersList;
+    private final List<Worker> playerWorkersList;
 
     public ResourceGeneratorThread(Building building, List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
         this.building = building;
-        this.sleepDuration = ThreadUtils.toMinutes(1);
+        this.sleepDuration = building.getResourceProduction().stream()
+                .mapToLong(resourceAmount -> resourceAmount.getResource().getTimeLimitForSearch())
+                .summaryStatistics().getMax();
         this.playerResources = playerResources;
         this.playerWorkersList = playerWorkersList;
     }
 
     @Override
     public void run() {
-        while (!interrupted()) {
+        while (!isInterrupted()) {
             try {
-                System.out.println();
                 Thread.sleep(sleepDuration);
             } catch (InterruptedException e) {
-                break;
+                return;
             }
 
             synchronized (this) {
-                for(ResourceAmount x : building.getResourceProduction()) {
-                    if(x.getResource() == ResourceType.POPULATION) {
-                        playerWorkersList.add(new Worker("woker_added"));
+                building.getResourceProduction().forEach(resourceAmount -> {
+                    if(resourceAmount.getResource() == ResourceType.POPULATION) {
+                        playerWorkersList.add(new Worker("worker_added"));
                     }
-                }
-                addToPlayerResources(playerResources, building.getResourceProduction());
-                System.out.println("received resources:");
-                System.out.println(building.getResourceProduction());
+                    playerResources.stream()
+                            .filter(playerResource -> playerResource.getResource().equals(resourceAmount.getResource()))
+                            .forEach(playerResource -> playerResource.setAmount(playerResource.getAmount() + resourceAmount.getAmount()));
+                });
             }
-        }
-    }
-
-    public void addToPlayerResources(List<ResourceAmount> playerResources, List<ResourceAmount> resourcesToAdd) {
-        for(ResourceAmount x : playerResources) {
-            for(ResourceAmount y : resourcesToAdd) {
-                if(x.getResource().equals(y.getResource())) {
-                    x.setAmount(x.getAmount() + y.getAmount());
-                }
-            }
-
         }
     }
 }

@@ -58,18 +58,17 @@ public class Worker {
         this.resourceConsumption = resourceConsumption;
     }
 
-    public void searchResources(ResourceType resourceTypeToLook, List<ResourceAmount> playerResources) {
-        currentMission = String.format("procurar recursos: %s\n", resourceTypeToLook.getDescription());
-        new SearchResourcesThread(new Resource(resourceTypeToLook), playerResources, this).start();
+    public void searchResources(ResourceType resourceType, List<ResourceAmount> playerResources) {
+        currentMission = "Procurar Recursos: " + resourceType.getDescription();
+        new SearchResourcesThread(new Resource(resourceType), playerResources, this).start();
     }
 
-    public void makeConstruction(ConstructionProcess constructionProcess, Building construction, List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
-        currentMission = String.format("%s de Edifício: %s", constructionProcess.getProcess(), construction.getConstructionTypeName());
-        if(constructionProcess == ConstructionProcess.CREATION) {
-            new ConstructionBuildingThread(construction, this, playerResources, playerWorkersList).start();
-        } else {
-            new ConstructionUpdatingThread(construction, this, playerResources).start();
-        }
+    public void makeConstruction(ConstructionProcess process, Building building, List<ResourceAmount> playerResources, List<Worker> workerList) {
+        currentMission = process.getProcess() + " de Edifício: " + building.getConstructionTypeName();
+        Thread constructionThread = process == ConstructionProcess.CREATION
+                ? new ConstructionBuildingThread(building, this, playerResources, workerList)
+                : new ConstructionUpdatingThread(building, this, playerResources);
+        constructionThread.start();
     }
 
 }

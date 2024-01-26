@@ -12,9 +12,9 @@ class PlayerService {
 
     public PlayerService(Player player) {
         this.player = player;
-        workers.add(new Worker("worker1"));
-        workers.add(new Worker("worker2"));
-        workers.add(new Worker("worker3"));
+        addWorker(new Worker("worker1"));
+        addWorker(new Worker("worker2"));
+        addWorker(new Worker("worker3"));
         this.setLevel(1);
     }
 
@@ -42,14 +42,10 @@ class PlayerService {
         this.resources = resources;
     }
 
-    public void addResource(ResourceType resourceType, int amount) {
-        resources.add(new ResourceAmount(resourceType, amount));
-    }
-
     public void addWorker(Worker worker) {
-        for(ResourceAmount x : resources) {
-            if(x.getResource() == ResourceType.POPULATION) {
-                if(x.getAmount() < workers.size()) {
+        for(ResourceAmount playerResource : resources) {
+            if(playerResource.getResource() == ResourceType.POPULATION) {
+                if(workers.size() < playerResource.getAmount()) {
                     workers.add(worker);
                 }
                 System.out.println("Chegaste ao limite de trabalhadores!");
@@ -101,6 +97,19 @@ class PlayerService {
                 .toList());
     }
 
+    public void addResource(ResourceType resourceType, int amount) {
+        Optional<ResourceAmount> optionalResource = resources.stream()
+                .filter(resource -> resource.getResource() == resourceType)
+                .findFirst();
+
+        if (optionalResource.isPresent()) {
+            ResourceAmount resource = optionalResource.get();
+            resource.setAmount(resource.getAmount() + amount);
+        } else {
+            resources.add(new ResourceAmount(resourceType, amount));
+        }
+    }
+
     public List<Building> getBuildingList() {
         return buildingList;
     }
@@ -124,7 +133,7 @@ class PlayerService {
         for (ResourceAmount buildingResource : requiredResources) {
             for (ResourceAmount playerResource : resources) {
                 if(playerResource.getResource() == buildingResource.getResource()) {
-                    hasResourcesAvailable = playerResource.getAmount() >= buildingResource.getAmount();
+                    return playerResource.getAmount() >= buildingResource.getAmount();
                 }
             }
         }

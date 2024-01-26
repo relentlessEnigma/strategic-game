@@ -8,15 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 public enum ResourceType {
-    WOOD(
-            // Description of the Resource
-            "Madeira",
-            // Initial Offer given
-            100,
-            // Difficulty, it means there can be enemies around and kill the worker
-            Difficulty.EASY,
-            // Convert to Minutes (60 * 1000)
-            ThreadUtils.toMinutes(5), 100, 2),
+    WOOD("Madeira", 100, Difficulty.EASY, ThreadUtils.toMinutes(5), 100, 2),
     POPULATION("População", 3, Difficulty.HARD, ThreadUtils.toMinutes(30), 2,0),
     WATER("Água", 200, Difficulty.EASY, ThreadUtils.toMinutes(3), 100,1),
     FOOD("Comida", 100, Difficulty.EASY, ThreadUtils.toMinutes(7), 100,3),
@@ -25,8 +17,7 @@ public enum ResourceType {
     SILVER("Prata", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(20), 43,8),
     GRAPES("Uvas", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(15), 32,7),
     GOLD("Ouro", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8, 50),
-    FAVOR("Favor aos Deuses", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8,0)
-    ;
+    FAVOR("Favor aos Deuses", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8,0);
 
     String description;
     Difficulty hardToGet;
@@ -101,34 +92,14 @@ public enum ResourceType {
 
     public static List<ResourceType> getResourcesPackBasedOnCurrentEra(int currentEraLevel) {
         EraAge currentEra = EraAge.getByLevel(currentEraLevel);
-        List<ResourceType> resourcesPack = new ArrayList<>();
-
-        switch (Objects.requireNonNull(currentEra)) {
-            case STONE_AGE:
-                resourcesPack.addAll(Arrays.asList(POPULATION, FOOD, WATER, WOOD, STONE));
-                break;
-            case BRONZE_AGE:
-                resourcesPack.add(IRON);
-                break;
-            case IRON_AGE:
-                resourcesPack.add(SILVER);
-                break;
-            case MEDIEVAL_AGE:
-                resourcesPack.add(GRAPES);
-                break;
-            case INDUSTRIAL_AGE:
-                resourcesPack.add(GOLD);
-                break;
-            case MODERN_AGE:
-                resourcesPack.add(FAVOR);
-                break;
-            case RENAISSANCE, FUTURE_AGE, INFORMATION_AGE:
-                resourcesPack.addAll(List.of());
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid era level");
-        }
-
-        return resourcesPack;
+        return switch (Objects.requireNonNull(currentEra)) {
+            case STONE_AGE -> List.of(POPULATION, FOOD, WATER, WOOD, STONE);
+            case BRONZE_AGE -> List.of(IRON);
+            case IRON_AGE -> List.of(SILVER);
+            case MEDIEVAL_AGE -> List.of(GRAPES);
+            case INDUSTRIAL_AGE -> List.of(GOLD);
+            case MODERN_AGE -> List.of(FAVOR);
+            default -> List.of();
+        };
     }
 }

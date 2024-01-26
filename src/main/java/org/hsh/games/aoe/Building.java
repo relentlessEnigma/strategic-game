@@ -3,12 +3,11 @@ package org.hsh.games.aoe;
 import org.hsh.games.aoe.entities.ConstructionType;
 import org.hsh.games.aoe.entities.Worker;
 import org.hsh.games.aoe.threads.ResourceGeneratorThread;
-
 import java.util.List;
 
 public class Building {
 
-    private Boolean isBuilded;
+    private boolean isBuilt;
     private int level;
     private int maxLevel;
     private String constructionTypeName;
@@ -16,10 +15,10 @@ public class Building {
     private int constructionMinutes;
     private List<ResourceAmount> resourceCost;
     private List<ResourceAmount> resourceProduction;
-    private int timeForProduction;
+    private final int timeForProduction;
 
-    public Building(Boolean isBuilded, ConstructionType constructionType) {
-        this.isBuilded = isBuilded;
+    public Building(boolean isBuilt, ConstructionType constructionType) {
+        this.isBuilt = isBuilt;
         this.level = 0;
         this.constructionTypeName = constructionType.getName();
         this.constructionMinutes = constructionType.getBaseConstructionTime();
@@ -33,18 +32,12 @@ public class Building {
     public void build(List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
         if(amountConstructionsAllowed > 0) {
             System.out.println("A retirar recursos necessários do teu inventário...");
-            try {
-                Thread.sleep(getConstructionTimeInMils());
-            } catch (InterruptedException e) {
-                System.out.println("Construção Falhou: " + getConstructionTypeName());
-                throw new RuntimeException(e);
-            }
-
+            sleep(getConstructionTimeInMils());
             level = 1;
-            isBuilded = true;
+            isBuilt = true;
+            amountConstructionsAllowed--;
             increaseResourceCost();
             startThreadForProductions(playerResources, playerWorkersList);
-
         } else {
             System.out.println("Já construiste o máximo deste tipo de edificio");
         }
@@ -52,18 +45,20 @@ public class Building {
 
     public void upgrade() {
         if(level < maxLevel) {
-
-            try {
-                Thread.sleep(getConstructionTimeInMils());
-            } catch (InterruptedException e) {
-                System.out.println("Atualização Falhou: " + getConstructionTypeName());
-                throw new RuntimeException(e);
-            }
-
+            sleep(getConstructionTimeInMils());
             level++;
             constructionMinutes += level * 2;
             increaseResourceCost();
             increaseResourceProductions();
+        }
+    }
+
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            System.out.println("Construção Falhou: " + getConstructionTypeName());
+            throw new RuntimeException(e);
         }
     }
 
@@ -75,17 +70,11 @@ public class Building {
     }
 
     private void increaseResourceCost() {
-        for (ResourceAmount resourceAmount : resourceCost) {
-            int baseAmount = resourceAmount.getAmount();
-            resourceAmount.setAmount(baseAmount * (level+1));
-        }
+        resourceCost.forEach(resourceAmount -> resourceAmount.setAmount(resourceAmount.getAmount() * (level+1)));
     }
 
     private void increaseResourceProductions() {
-        for (ResourceAmount resourceAmount : resourceProduction) {
-            int baseAmount = resourceAmount.getAmount();
-            resourceAmount.setAmount(baseAmount * level);
-        }
+        resourceProduction.forEach(resourceAmount -> resourceAmount.setAmount(resourceAmount.getAmount() * level));
     }
 
     public void showDetails() {
@@ -110,7 +99,7 @@ public class Building {
     }
 
     public Boolean getBuilded() {
-        return isBuilded;
+        return isBuilt;
     }
 
     public int getConstructionMinutes() {
