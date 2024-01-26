@@ -1,9 +1,8 @@
-package org.example.entities;
+package org.hsh.games.aoe.entities;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public enum BuildingAndResourceAvailabilityPerLevel {
     LEVEL_1(1, List.of(

@@ -1,12 +1,13 @@
-package org.example.entities;
+package org.hsh.games.aoe.entities;
 
-import org.example.Building;
-import org.example.ConstructionProcess;
-import org.example.Resource;
-import org.example.ResourceAmount;
-import org.example.threads.ConstructionBuildingThread;
-import org.example.threads.ConstructionUpdatingThread;
-import org.example.threads.SearchResourcesThread;
+import org.hsh.games.aoe.Building;
+import org.hsh.games.aoe.ConstructionProcess;
+import org.hsh.games.aoe.Resource;
+import org.hsh.games.aoe.ResourceAmount;
+import org.hsh.games.aoe.threads.ConstructionBuildingThread;
+import org.hsh.games.aoe.threads.ConstructionUpdatingThread;
+import org.hsh.games.aoe.threads.SearchResourcesThread;
+
 import java.util.List;
 
 public class Worker {

@@ -1,8 +1,6 @@
-package org.example;
+package org.hsh.games.aoe;
 
-import org.example.entities.*;
-
-import java.lang.reflect.Constructor;
+import org.hsh.games.aoe.entities.*;
 import java.util.*;
 import java.util.stream.Collectors;
 

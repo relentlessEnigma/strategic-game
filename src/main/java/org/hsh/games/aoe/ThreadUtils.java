@@ -1,4 +1,4 @@
-package org.example;
+package org.hsh.games.aoe;
 
 public class ThreadUtils {
     public static int toMinutes(int number) {

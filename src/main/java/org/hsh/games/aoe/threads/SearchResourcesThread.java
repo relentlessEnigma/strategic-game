@@ -1,9 +1,10 @@
-package org.example.threads;
+package org.hsh.games.aoe.threads;
 
-import org.example.ConsoleUtils;
-import org.example.Resource;
-import org.example.ResourceAmount;
-import org.example.entities.Worker;
+import org.hsh.games.aoe.ConsoleUtils;
+import org.hsh.games.aoe.Resource;
+import org.hsh.games.aoe.ResourceAmount;
+import org.hsh.games.aoe.entities.Worker;
+
 import java.util.List;
 
 public class SearchResourcesThread extends Thread {

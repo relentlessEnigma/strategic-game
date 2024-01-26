@@ -1,7 +1,8 @@
-package org.example;
+package org.hsh.games.aoe;
 
-import org.example.entities.Difficulty;
-import org.example.entities.ResourceType;
+import org.hsh.games.aoe.entities.Difficulty;
+import org.hsh.games.aoe.entities.ResourceType;
+
 import java.util.List;
 import java.util.Random;
 

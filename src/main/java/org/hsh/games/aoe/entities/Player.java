@@ -1,4 +1,4 @@
-package org.example.entities;
+package org.hsh.games.aoe.entities;
 
 public class Player {
 

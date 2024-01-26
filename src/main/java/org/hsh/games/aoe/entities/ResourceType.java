@@ -1,6 +1,7 @@
-package org.example.entities;
+package org.hsh.games.aoe.entities;
 
-import org.example.ThreadUtils;
+import org.hsh.games.aoe.ThreadUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

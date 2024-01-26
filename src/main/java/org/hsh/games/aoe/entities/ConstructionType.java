@@ -1,7 +1,8 @@
-package org.example.entities;
+package org.hsh.games.aoe.entities;
 
-import org.example.ResourceAmount;
-import org.example.ThreadUtils;
+import org.hsh.games.aoe.ResourceAmount;
+import org.hsh.games.aoe.ThreadUtils;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

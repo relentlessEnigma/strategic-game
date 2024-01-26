@@ -1,4 +1,4 @@
-package org.example;
+package org.hsh.games.aoe;
 
 public enum ConstructionProcess {
     CREATION("Construção"),

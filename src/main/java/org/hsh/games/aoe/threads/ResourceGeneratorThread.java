@@ -1,10 +1,10 @@
-package org.example.threads;
+package org.hsh.games.aoe.threads;
 
-import org.example.Building;
-import org.example.ResourceAmount;
-import org.example.ThreadUtils;
-import org.example.entities.ResourceType;
-import org.example.entities.Worker;
+import org.hsh.games.aoe.Building;
+import org.hsh.games.aoe.ResourceAmount;
+import org.hsh.games.aoe.ThreadUtils;
+import org.hsh.games.aoe.entities.ResourceType;
+import org.hsh.games.aoe.entities.Worker;
 
 import java.util.List;
 

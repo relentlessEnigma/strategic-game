@@ -1,7 +1,9 @@
-package org.example;
+package org.hsh.games.aoe;
 
-import org.example.entities.*;
-
+import org.hsh.games.aoe.entities.BuildingAndResourceAvailabilityPerLevel;
+import org.hsh.games.aoe.entities.ConstructionType;
+import org.hsh.games.aoe.entities.Player;
+import org.hsh.games.aoe.entities.ResourceType;
 import java.util.*;
 
 public class GameOfStrategy {
@@ -80,81 +82,67 @@ public class GameOfStrategy {
 
     private void displayBuildingTypes(PlayerService playerService) {
         System.out.println("Lista de Edificios:");
-
-        int index = 1;
-        Map<Integer, String> typeIndexMap = new HashMap<>();
-        for (String constructionType : playerService.getAvailableConstructionTypes()) {
-            System.out.println(index + ". " + constructionType);
-            typeIndexMap.put(index++, constructionType);
+        List<String> constructionTypes = new ArrayList<>(playerService.getAvailableConstructionTypes());
+        for (int i = 0; i < constructionTypes.size(); i++) {
+            System.out.println((i + 1) + ". " + constructionTypes.get(i));
         }
 
-        System.out.println("Escolhe um tipo de edificio: ");
         int typeOption = scanner.nextInt();
         scanner.nextLine();
 
         ConsoleUtils.clearConsole();
         playerService.showResourcesHeader();
 
-        if (typeOption > 0 && typeOption < index) {
-            String selectedType = typeIndexMap.get(typeOption);
-            displayBuildingsOfType(playerService, selectedType);
-        } else { // Limpar o buffer
+        if (typeOption > 0 && typeOption <= constructionTypes.size()) {
+            displayBuildingsOfType(playerService, constructionTypes.get(typeOption - 1));
+        } else {
             System.out.println("Escolha inválida. Tenta novamente.");
         }
         playerService.checkForNewEraConditions();
     }
 
     private void displayBuildingsOfType(PlayerService playerService, String selectedType) {
-        System.out.printf("Lista de Edificios %s:\n", selectedType);
-        List<Building> playerBuildingsOfType = playerService.getBuildingsFromConstructionName(selectedType);
-        int index = 1;
-        for (Building building : playerBuildingsOfType) {
-            System.out.print(index + ". ");
-            building.showDetails();
-            index++;
-            if (!playerService.checkIfBuildingAmountHasReached(building)) {
-                System.out.printf("%d Create a new %s\n", index, building.getConstructionTypeName());
+        List<Building> buildings = playerService.getBuildingsFromConstructionName(selectedType);
+        for (int i = 0; i < buildings.size(); i++) {
+            System.out.printf("%d. ", i + 1);
+            buildings.get(i).showDetails();
+            if (!playerService.checkIfBuildingAmountHasReached(buildings.get(i))) {
+                System.out.printf("%d Create a new %s\n", i + 2, buildings.get(i).getConstructionTypeName());
             }
         }
 
-        System.out.println("Escolhe um edificio para construir ou atualizar: ");
-        int buildingOption = scanner.nextInt();
+        int option = getOptionFromUser();
+        if (option > 0 && option <= buildings.size()) {
+            processSelectedBuilding(playerService, buildings.get(option - 1));
+        } else if (option == buildings.size() + 1) {
+            processNewBuilding(playerService, new Building(false, ConstructionType.getEnumFromConstant(selectedType)));
+        } else {
+            System.out.println("Invalid choice. Try again.");
+        }
+    }
+
+    private int getOptionFromUser() {
+        System.out.println("Choose a building to construct or update: ");
+        int option = scanner.nextInt();
         scanner.nextLine();
-
-        boolean isUpdatingAnExistentBuilding = buildingOption > 0 && buildingOption <= playerBuildingsOfType.size();
-        boolean isCreatingANewBuilding = buildingOption == playerBuildingsOfType.size() + 1;
-
-        if (isUpdatingAnExistentBuilding) {
-            Building selectedBuilding = playerBuildingsOfType.get(buildingOption - 1);
-            processSelectedBuilding(playerService, selectedBuilding);
-        } else if (isCreatingANewBuilding) {
-            Building newBuilding = new Building(false, Objects.requireNonNull(ConstructionType.getEnumFromConstant(selectedType)));
-            processNewBuilding(playerService, newBuilding);
-        } else {
-            System.out.println("Escolha inválida. Tenta novamente.");
-        }
+        return option;
     }
 
-    private void processSelectedBuilding(PlayerService playerService, Building selectedBuilding) {
-        if (playerService.checkIfPlayerHasEnoughResources(selectedBuilding)) {
-            if (playerService.isFirstTimeBuilding(selectedBuilding)) {
-                if (playerService.getWorkerAvailable() != null) {
-                    playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, selectedBuilding);
-                }
-            } else {
-                if (playerService.getWorkerAvailable() != null) {
-                    playerService.sendWorkersToConstructionJob(ConstructionProcess.UPDATE, selectedBuilding);
-                }
+    private void processSelectedBuilding(PlayerService playerService, Building building) {
+        if (playerService.checkIfPlayerHasEnoughResources(building)) {
+            ConstructionProcess process = playerService.isFirstTimeBuilding(building) ? ConstructionProcess.CREATION : ConstructionProcess.UPDATE;
+            if (playerService.getWorkerAvailable() != null) {
+                playerService.sendWorkersToConstructionJob(process, building);
             }
         } else {
-            System.out.println("Não tens recursos suficientes!");
+            System.out.println("Not enough resources!");
         }
     }
 
-    private void processNewBuilding(PlayerService playerService, Building newBuilding) {
-        if (playerService.checkIfPlayerHasEnoughResources(newBuilding)) {
-            playerService.addNewBuilding(newBuilding);
-            playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, newBuilding);
+    private void processNewBuilding(PlayerService playerService, Building building) {
+        if (playerService.checkIfPlayerHasEnoughResources(building)) {
+            playerService.addNewBuilding(building);
+            playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, building);
         } else {
             System.out.println("Não tens recursos suficientes!");
         }
