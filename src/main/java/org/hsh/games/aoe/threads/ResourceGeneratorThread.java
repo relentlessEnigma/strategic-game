@@ -14,15 +14,14 @@ public class ResourceGeneratorThread extends Thread {
 
     public ResourceGeneratorThread(Building building, List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
         this.building = building;
-        this.sleepDuration = building.getResourceProduction().stream()
-                .mapToLong(resourceAmount -> resourceAmount.getResource().getTimeLimitForSearch())
-                .summaryStatistics().getMax();
+        this.sleepDuration = building.getTimeBetweenProductions();
         this.playerResources = playerResources;
         this.playerWorkersList = playerWorkersList;
     }
 
     @Override
     public void run() {
+        System.out.println("A gerar recursos...");
         while (!isInterrupted()) {
             try {
                 Thread.sleep(sleepDuration);
@@ -34,10 +33,14 @@ public class ResourceGeneratorThread extends Thread {
                 building.getResourceProduction().forEach(resourceAmount -> {
                     if(resourceAmount.getResource() == ResourceType.POPULATION) {
                         playerWorkersList.add(new Worker("worker_added"));
+                        System.out.println("Adinionado +1 Population");
                     }
                     playerResources.stream()
                             .filter(playerResource -> playerResource.getResource().equals(resourceAmount.getResource()))
-                            .forEach(playerResource -> playerResource.setAmount(playerResource.getAmount() + resourceAmount.getAmount()));
+                            .forEach(playerResource -> {
+                                playerResource.setAmount(playerResource.getAmount() + resourceAmount.getAmount());
+                                System.out.println("Recurso " + playerResource.getResource().getDescription() + " adicionado ao inventário!");
+                            });
                 });
             }
         }

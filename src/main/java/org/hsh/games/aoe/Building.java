@@ -15,7 +15,7 @@ public class Building {
     private int constructionMinutes;
     private List<ResourceAmount> resourceCost;
     private List<ResourceAmount> resourceProduction;
-    private final int timeForProduction;
+    private final int timeBetweenProductions;
 
     public Building(boolean isBuilt, ConstructionType constructionType) {
         this.isBuilt = isBuilt;
@@ -26,7 +26,19 @@ public class Building {
         this.amountConstructionsAllowed = constructionType.getAmountConstructionsAllowed();
         this.resourceCost = constructionType.getBaseResourcesCost();
         this.maxLevel = constructionType.getMaxLevel();
-        this.timeForProduction = constructionType.getBaseConstructionTime();
+        this.timeBetweenProductions = constructionType.getBaseConstructionTime();
+    }
+
+    public boolean isBuilt() {
+        return isBuilt;
+    }
+
+    public void setBuilt(boolean built) {
+        isBuilt = built;
+    }
+
+    public int getTimeBetweenProductions() {
+        return timeBetweenProductions;
     }
 
     public void build(List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
@@ -63,7 +75,7 @@ public class Building {
     }
 
     public void startThreadForProductions(List<ResourceAmount> playerResources, List<Worker> playerWorkersList) {
-        boolean hasConstructionProductions = timeForProduction > 0;
+        boolean hasConstructionProductions = timeBetweenProductions > 0;
         if(hasConstructionProductions) {
             new ResourceGeneratorThread(this, playerResources, playerWorkersList).start();
         }

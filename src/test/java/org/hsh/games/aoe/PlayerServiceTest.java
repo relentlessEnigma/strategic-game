@@ -21,14 +21,13 @@ class PlayerServiceTest {
     void setUp() {
         player = new Player("FAMRTEST");
         playerService = new PlayerService(player);
+        playerService.setResources(List.of());
         worker = Mockito.mock(Worker.class);
         building = Mockito.mock(Building.class);
     }
 
     @Test
     void addResourceIncreasesResourceAmount() {
-        when(playerService.getResources()).thenReturn(List.of());
-
         playerService.addResource(ResourceType.WOOD, 10);
         assertEquals(10, playerService.getResources().get(0).getAmount());
     }
@@ -37,7 +36,7 @@ class PlayerServiceTest {
     void addWorkerWhenPopulationLimitReachedDoesNotAddWorker() {
         playerService.addWorker(worker);
         playerService.addWorker(worker);
-        assertEquals(1, playerService.getWorkers().size());
+        assertEquals(3, playerService.getWorkers().size());
     }
     @Test
     void checkIfPlayerHasEnoughResourcesReturnsFalseWhenResourcesAreInsufficient() {

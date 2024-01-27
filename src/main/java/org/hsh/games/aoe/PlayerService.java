@@ -12,10 +12,10 @@ class PlayerService {
 
     public PlayerService(Player player) {
         this.player = player;
+        this.setLevel(1);
         addWorker(new Worker("worker1"));
         addWorker(new Worker("worker2"));
         addWorker(new Worker("worker3"));
-        this.setLevel(1);
     }
 
     public Player getPlayer() {
