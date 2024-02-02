@@ -135,7 +135,7 @@ public class GameOfStrategy {
                 playerService.sendWorkersToConstructionJob(process, building);
             }
         } else {
-            System.out.println("Not enough resources!");
+            System.out.println("Não tens recursos suficientes!");
         }
     }
 

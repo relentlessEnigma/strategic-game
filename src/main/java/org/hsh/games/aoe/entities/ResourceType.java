@@ -2,22 +2,20 @@ package org.hsh.games.aoe.entities;
 
 import org.hsh.games.aoe.ThreadUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public enum ResourceType {
-    WOOD("Madeira", 100, Difficulty.EASY, ThreadUtils.toMinutes(5), 100, 2),
-    POPULATION("População", 3, Difficulty.HARD, ThreadUtils.toMinutes(30), 2,0),
-    WATER("Água", 200, Difficulty.EASY, ThreadUtils.toMinutes(3), 100,1),
-    FOOD("Comida", 100, Difficulty.EASY, ThreadUtils.toMinutes(7), 100,3),
-    STONE("Pedra", 10, Difficulty.EASY, ThreadUtils.toMinutes(10), 70,4),
-    IRON("Ferro", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(15), 62,10),
-    SILVER("Prata", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(20), 43,8),
-    GRAPES("Uvas", 0, Difficulty.MEDIUM, ThreadUtils.toMinutes(15), 32,7),
-    GOLD("Ouro", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8, 50),
-    FAVOR("Favor aos Deuses", 0, Difficulty.EXTREME, ThreadUtils.toMinutes(30), 8,0);
+    WOOD("Madeira", 100, Difficulty.EASY, ThreadUtils.toMilliseconds(5), 100, 2),
+    POPULATION("População", 3, Difficulty.HARD, ThreadUtils.toMilliseconds(30), 2,0),
+    WATER("Água", 200, Difficulty.EASY, ThreadUtils.toMilliseconds(3), 100,1),
+    FOOD("Comida", 100, Difficulty.EASY, ThreadUtils.toMilliseconds(7), 100,3),
+    STONE("Pedra", 10, Difficulty.EASY, ThreadUtils.toMilliseconds(10), 70,4),
+    IRON("Ferro", 0, Difficulty.MEDIUM, ThreadUtils.toMilliseconds(15), 62,10),
+    SILVER("Prata", 0, Difficulty.MEDIUM, ThreadUtils.toMilliseconds(20), 43,8),
+    GRAPES("Uvas", 0, Difficulty.MEDIUM, ThreadUtils.toMilliseconds(15), 32,7),
+    GOLD("Ouro", 0, Difficulty.EXTREME, ThreadUtils.toMilliseconds(30), 8, 50),
+    FAVOR("Favor aos Deuses", 0, Difficulty.EXTREME, ThreadUtils.toMilliseconds(30), 8,0);
 
     String description;
     Difficulty hardToGet;
