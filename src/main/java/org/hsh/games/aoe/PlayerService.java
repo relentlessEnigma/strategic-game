@@ -135,7 +135,7 @@ class PlayerService {
         for (ResourceAmount buildingResource : requiredResources) {
             for (ResourceAmount playerResource : resources) {
                 if(playerResource.getResource() == buildingResource.getResource()) {
-                    return playerResource.getAmount() >= buildingResource.getAmount();
+                    hasResourcesAvailable = playerResource.getAmount() >= buildingResource.getAmount();
                 }
             }
         }
