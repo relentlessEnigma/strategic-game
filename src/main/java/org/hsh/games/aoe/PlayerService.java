@@ -47,7 +47,6 @@ class PlayerService {
             if(playerResource.getResource() == ResourceType.POPULATION) {
                 if(workers.size() < playerResource.getAmount()) {
                     workers.add(worker);
-                    System.out.println("Recebeste 1 trabalhador!");
                 } else {
                     System.out.println("Chegaste ao limite de trabalhadores!");
                 }

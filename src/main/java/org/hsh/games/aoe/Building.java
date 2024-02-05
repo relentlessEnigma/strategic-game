@@ -26,7 +26,7 @@ public class Building {
         this.amountConstructionsAllowed = constructionType.getAmountConstructionsAllowed();
         this.resourceCost = constructionType.getBaseResourcesCost();
         this.maxLevel = constructionType.getMaxLevel();
-        this.timeBetweenProductions = constructionType.getBaseConstructionTime();
+        this.timeBetweenProductions = constructionType.getBaseProductionTime();
     }
 
     public boolean isBuilt() {
@@ -119,7 +119,7 @@ public class Building {
     }
 
     public int getConstructionTimeInMils() {
-        return ThreadUtils.toMinutes(constructionMinutes);
+        return constructionMinutes;
     }
 
     public void setConstructionMinutes(int constructionMinutes) {

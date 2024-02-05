@@ -73,13 +73,13 @@ public class Resource {
 
     public void search(List<ResourceAmount> playerResources, String workerName, String currentMission) {
         Random random = new Random();
-        int lowestSearchTime = random.nextInt(ThreadUtils.toMinutes(1), timeLimitForSearch/2);
+        int lowestSearchTime = random.nextInt(ThreadUtils.toMilliseconds(1), timeLimitForSearch/2);
         int totalSearchTime = random.nextInt(lowestSearchTime, timeLimitForSearch);
         int amountMax = amountMaxToBeFound/2;
         if(amountMax < 2) amountMax = 3;
         int lowestAmountToBeFound = random.nextInt(1, amountMax);
 
-        System.out.printf("O %s começou a tarefa de %s\nTermina dentro de %d minutos.\n", workerName, currentMission, totalSearchTime/(60*1000));
+        System.out.printf("O %s começou a tarefa de %s\nTermina dentro de %d minutos.\n", workerName, currentMission, ThreadUtils.toMinutes(totalSearchTime));
 
         try {
             Thread.sleep(totalSearchTime);

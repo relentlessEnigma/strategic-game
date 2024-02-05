@@ -21,7 +21,11 @@ public class ResourceGeneratorThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("A gerar recursos...");
+        if(building.getResourceProduction().isEmpty()) {
+            return;
+        } else {
+            System.out.println("A iniciar produção de recursos...");
+        }
         while (!isInterrupted()) {
             try {
                 Thread.sleep(sleepDuration);
@@ -30,18 +34,34 @@ public class ResourceGeneratorThread extends Thread {
             }
 
             synchronized (this) {
-                building.getResourceProduction().forEach(resourceAmount -> {
-                    if(resourceAmount.getResource() == ResourceType.POPULATION) {
-                        playerWorkersList.add(new Worker("worker_added"));
-                        System.out.println("Adinionado +1 Population");
-                    }
-                    playerResources.stream()
-                            .filter(playerResource -> playerResource.getResource().equals(resourceAmount.getResource()))
-                            .forEach(playerResource -> {
-                                playerResource.setAmount(playerResource.getAmount() + resourceAmount.getAmount());
-                                System.out.println("Recurso " + playerResource.getResource().getDescription() + " adicionado ao inventário!");
-                            });
-                });
+                addResourcesToPlayerInventory();
+            }
+        }
+    }
+
+    private void addResourcesToPlayerInventory() {
+        building.getResourceProduction().forEach(resourceAmount -> {
+            playerResources.stream()
+                    .filter(playerResource -> playerResource.getResource().equals(resourceAmount.getResource()))
+                    .forEach(playerResource -> {
+                        playerResource.setAmount(playerResource.getAmount() + resourceAmount.getAmount());
+                        System.out.println("Recurso " + playerResource.getResource().getDescription() + " adicionado ao inventário!");
+                        if(playerResource.getResource() == ResourceType.POPULATION){
+                            addWorkerToPlayerWorkersList();
+                        }
+                    });
+        });
+    }
+
+    private void addWorkerToPlayerWorkersList() {
+        for(ResourceAmount playerResource : playerResources) {
+            if(playerResource.getResource() == ResourceType.POPULATION) {
+                if(playerWorkersList.size() < playerResource.getAmount()) {
+                    playerWorkersList.add(new Worker("worker_added"));
+                    System.out.println("Adinionado +1 Population");
+                } else {
+                    System.out.println("Chegaste ao limite de trabalhadores!");
+                }
             }
         }
     }
