@@ -2,7 +2,6 @@ package org.hsh.games.aoe;
 
 import org.hsh.games.aoe.entities.Difficulty;
 import org.hsh.games.aoe.entities.ResourceType;
-
 import java.util.List;
 import java.util.Random;
 
@@ -21,54 +20,6 @@ public class Resource {
         this.timeLimitForSearch = resourceType.getTimeLimitForSearch();
         this.amountMaxToBeFound = resourceType.getAmountMaxToBeFound();
         this.pricePerUnit = resourceType.getPricePerUnit();
-    }
-
-    public ResourceType getType() {
-        return type;
-    }
-
-    public void setType(ResourceType type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Difficulty getHardToGet() {
-        return hardToGet;
-    }
-
-    public void setHardToGet(Difficulty hardToGet) {
-        this.hardToGet = hardToGet;
-    }
-
-    public int getTimeLimitForSearch() {
-        return timeLimitForSearch;
-    }
-
-    public void setTimeLimitForSearch(int timeLimitForSearch) {
-        this.timeLimitForSearch = timeLimitForSearch;
-    }
-
-    public int getAmountMaxToBeFound() {
-        return amountMaxToBeFound;
-    }
-
-    public void setAmountMaxToBeFound(int amountMaxToBeFound) {
-        this.amountMaxToBeFound = amountMaxToBeFound;
-    }
-
-    public int getPricePerUnit() {
-        return pricePerUnit;
-    }
-
-    public void setPricePerUnit(int pricePerUnit) {
-        this.pricePerUnit = pricePerUnit;
     }
 
     public void search(List<ResourceAmount> playerResources, String workerName, String currentMission) {

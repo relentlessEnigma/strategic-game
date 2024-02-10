@@ -41,8 +41,9 @@ public enum ConstructionType {
                     new ResourceAmount(ResourceType.FOOD, 30),
                     new ResourceAmount(ResourceType.WOOD, 60)
             ),
-            Collections.emptyList(),
-            ThreadUtils.toMilliseconds(5)
+            List.of(
+                    new ResourceAmount(ResourceType.WATER, 5)
+            ), ThreadUtils.toMilliseconds(5)
     ),
     BARRACKS("Barracas", 2,5, ThreadUtils.toMilliseconds(4),
             List.of(

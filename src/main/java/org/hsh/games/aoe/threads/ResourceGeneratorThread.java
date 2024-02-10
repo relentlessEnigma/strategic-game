@@ -45,10 +45,10 @@ public class ResourceGeneratorThread extends Thread {
                     .filter(playerResource -> playerResource.getResource().equals(resourceAmount.getResource()))
                     .forEach(playerResource -> {
                         playerResource.setAmount(playerResource.getAmount() + resourceAmount.getAmount());
-                        System.out.println("Recurso " + playerResource.getResource().getDescription() + " adicionado ao inventário!");
                         if(playerResource.getResource() == ResourceType.POPULATION){
                             addWorkerToPlayerWorkersList();
                         }
+                        System.out.println("Adicionado +" + resourceAmount.getAmount() + " de " + resourceAmount.getResource().getDescription() + " ao inventário!");
                     });
         });
     }
@@ -58,9 +58,9 @@ public class ResourceGeneratorThread extends Thread {
             if(playerResource.getResource() == ResourceType.POPULATION) {
                 if(playerWorkersList.size() < playerResource.getAmount()) {
                     playerWorkersList.add(new Worker("worker_added"));
-                    System.out.println("Adinionado +1 Population");
                 } else {
-                    System.out.println("Chegaste ao limite de trabalhadores!");
+                    System.out.println("Chegaste ao limite de trabalhadores! Atualiza a Town Center!");
+                    this.interrupt();
                 }
             }
         }

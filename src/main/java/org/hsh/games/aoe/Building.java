@@ -97,7 +97,7 @@ public class Building {
             System.out.printf("%-10s: %d%n", resourceAmount.getResource().getDescription(), resourceAmount.getAmount());
         }
 
-        System.out.println("Tempo de construção: " + constructionMinutes + " minutos");
+        System.out.println("Tempo de construção: " + getConstructionMinutes() + " minutos");
 
         System.out.println("Produção de recursos por minuto:");
         if(resourceProduction.isEmpty()) {
@@ -115,7 +115,7 @@ public class Building {
     }
 
     public int getConstructionMinutes() {
-        return constructionMinutes;
+        return ThreadUtils.toMinutes(constructionMinutes);
     }
 
     public int getConstructionTimeInMils() {

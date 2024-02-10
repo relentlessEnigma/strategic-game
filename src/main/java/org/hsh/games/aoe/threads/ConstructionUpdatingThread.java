@@ -1,5 +1,6 @@
 package org.hsh.games.aoe.threads;
 
+import org.hsh.games.aoe.ApplicationConstants;
 import org.hsh.games.aoe.Building;
 import org.hsh.games.aoe.ConsoleUtils;
 import org.hsh.games.aoe.ResourceAmount;
@@ -30,7 +31,7 @@ public class ConstructionUpdatingThread extends Thread {
         System.out.println("Worker " + worker.getName() + " terminou a tarefa:\n" + worker.getCurrentMission() + "\n.");
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(ApplicationConstants.TIME_TO_SHOW_MESSAGE);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

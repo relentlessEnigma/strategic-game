@@ -1,86 +1,147 @@
 package org.hsh.games.aoe;
 
-import org.hsh.games.aoe.entities.EraAge;
-import org.hsh.games.aoe.entities.Player;
-import org.hsh.games.aoe.entities.ResourceType;
-import org.hsh.games.aoe.entities.Worker;
+import org.hsh.games.aoe.entities.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 class PlayerServiceTest {
     private PlayerService playerService;
     private Player player;
-    private Worker worker;
-    private Building building;
 
     @BeforeEach
     void setUp() {
         player = new Player("FAMRTEST");
         playerService = new PlayerService(player);
-        playerService.setResources(List.of());
-        worker = Mockito.mock(Worker.class);
-        building = Mockito.mock(Building.class);
+
     }
 
     @Test
     void addResourceIncreasesResourceAmount() {
+        // setup
+        playerService.setResources(new ArrayList<>());
         playerService.addResource(ResourceType.WOOD, 10);
         assertEquals(10, playerService.getResources().get(0).getAmount());
     }
 
     @Test
     void addWorkerWhenPopulationLimitReachedDoesNotAddWorker() {
-        playerService.addWorker(worker);
-        playerService.addWorker(worker);
+        Worker worker1 = new Worker("worker1");
+        Worker worker2 = new Worker("worker2");
+        Worker worker3 = new Worker("worker3");
+        playerService.addWorker(worker1);
+        playerService.addWorker(worker2);
+        playerService.addWorker(worker3);
         assertEquals(3, playerService.getWorkers().size());
-    }
-    @Test
-    void checkIfPlayerHasEnoughResourcesReturnsFalseWhenResourcesAreInsufficient() {
-        when(building.getResourceCost()).thenReturn(List.of(new ResourceAmount(ResourceType.WOOD, 15)));
-        playerService.addResource(ResourceType.WOOD, 10);
-        when(building.getResourceCost()).thenReturn(List.of(new ResourceAmount(ResourceType.WOOD, 5)));
-        playerService.addResource(ResourceType.WOOD, 10);
-        assertTrue(playerService.checkIfPlayerHasEnoughResources(building));
     }
 
     @Test
     void checkIfPlayerHasEnoughResourcesReturnsTrueWhenResourcesAreSufficient() {
+        List<ResourceAmount> playerResources = Arrays.asList(
+                new ResourceAmount(ResourceType.WOOD, 100),
+                new ResourceAmount(ResourceType.WATER, 100)
+        );
+        playerService.setResources(playerResources);
+
+        List<ResourceAmount> buildingCostResources = Arrays.asList(
+                new ResourceAmount(ResourceType.WOOD, 70),
+                new ResourceAmount(ResourceType.WATER, 100)
+        );
+        Building building = new Building(false, ConstructionType.HOUSE);
+        building.setResourceCost(buildingCostResources);
+
         assertTrue(playerService.checkIfPlayerHasEnoughResources(building));
     }
 
     @Test
+    void checkIfPlayerHasEnoughResourcesReturnsFalseWhenResourcesAreInsufficient() {
+        List<ResourceAmount> playerResources = Arrays.asList(
+                new ResourceAmount(ResourceType.WOOD, 100),
+                new ResourceAmount(ResourceType.WATER, 100)
+        );
+        playerService.setResources(playerResources);
+
+        List<ResourceAmount> buildingCostResources = Arrays.asList(
+                new ResourceAmount(ResourceType.WOOD, 120),
+                new ResourceAmount(ResourceType.WATER, 100)
+        );
+        Building building = new Building(false, ConstructionType.HOUSE);
+        building.setResourceCost(buildingCostResources);
+
+        assertFalse(playerService.checkIfPlayerHasEnoughResources(building));
+    }
+
+    @Test
     void checkIfBuildingAmountHasReachedReturnsTrueWhenLimitReached() {
-        when(building.getAmountConstructionsAllowed()).thenReturn(1);
-        when(building.getConstructionTypeName()).thenReturn("House");
-        when(building.getBuilded()).thenReturn(true);
+        Building building = new Building(true, ConstructionType.HOUSE);
+        building.setAmountConstructionsAllowed(1);
+
         playerService.addNewBuilding(building);
+
         assertTrue(playerService.checkIfBuildingAmountHasReached(building));
     }
 
     @Test
-    void checkIfBuildingAmountHasReachedReturnsFalseWhenLimitNotReached() {
-        when(building.getAmountConstructionsAllowed()).thenReturn(2);
-        when(building.getConstructionTypeName()).thenReturn("House");
-        when(building.getBuilded()).thenReturn(true);
+    void checkIfBuildingAmountHasReachedReturnsFalseWhenLimitReachedButIsNotBuilt() {
+        Building building = new Building(false, ConstructionType.HOUSE);
+        building.setAmountConstructionsAllowed(1);
+
         playerService.addNewBuilding(building);
+
+        assertFalse(playerService.checkIfBuildingAmountHasReached(building));
+    }
+
+    @Test
+    void checkIfBuildingAmountHasReachedReturnsFalseWhenLimitNotReached() {
+        Building building = new Building(false, ConstructionType.HOUSE);
+        building.setAmountConstructionsAllowed(2);
+
+        playerService.addNewBuilding(building);
+
         assertFalse(playerService.checkIfBuildingAmountHasReached(building));
     }
 
     @Test
     void checkIfBuildingHasReachedItsMaximLevelReturnsTrueWhenMaxLevelReached() {
-        when(building.getLevel()).thenReturn(5);
-        when(building.getMaxLevel()).thenReturn(5);
+        Building building = new Building(false, ConstructionType.HOUSE);
+
+        building.setMaxLevel(5);
+        building.setLevel(5);
+
         assertTrue(playerService.checkIfBuildingHasReachedItsMaximLevel(building));
     }
 
     @Test
     void checkIfBuildingHasReachedItsMaximLevelReturnsFalseWhenMaxLevelNotReached() {
-        when(building.getLevel()).thenReturn(4);
-        when(building.getMaxLevel()).thenReturn(5);
+        Building building = new Building(false, ConstructionType.HOUSE);
+
+        building.setMaxLevel(5);
+        building.setLevel(4);
+
         assertFalse(playerService.checkIfBuildingHasReachedItsMaximLevel(building));
+    }
+
+    @Test
+    void sendWorkersToConstructionJobAssignsWorkersToConstruction() {
+        Building building = new Building(false, ConstructionType.HOUSE);
+        Worker worker = mock(Worker.class);
+        List<Worker> workers = Collections.singletonList(worker);
+        playerService.setResources(List.of(new ResourceAmount(ResourceType.WOOD, 100)));
+        playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, building);
+        assertFalse(playerService.getWorkerAvailable().isOccupied());
+    }
+
+    @Test
+    void sendWorkersToSearchJobAssignsWorkersToSearch() {
+        Worker worker = mock(Worker.class);
+        List<Worker> workers = Collections.singletonList(worker);
+        playerService.sendWorkersToSearchJob(ResourceType.WOOD);
+        assertFalse(playerService.getWorkerAvailable().isOccupied());
     }
 }

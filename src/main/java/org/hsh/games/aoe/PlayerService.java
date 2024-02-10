@@ -22,16 +22,8 @@ class PlayerService {
         return player;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
     public List<Worker> getWorkers() {
         return workers;
-    }
-
-    public void setWorkers(List<Worker> workers) {
-        this.workers = workers;
     }
 
     public List<ResourceAmount> getResources() {
@@ -58,19 +50,18 @@ class PlayerService {
         System.out.println("====================================================================================================================");
         System.out.println(player.getEraAge().getEraName());
         for (ResourceAmount entry : resources) {
-            System.out.printf("%s: %d", entry.getResource().getDescription(), entry.getAmount());
+
+            if(entry.getResource() == ResourceType.POPULATION) {
+                System.out.printf("%s: ", entry.getResource().getDescription());
+                System.out.print(workers.stream().filter(worker -> !worker.isOccupied()).count() + "/" + workers.size());
+            } else {
+                System.out.printf("%s: %d", entry.getResource().getDescription(), entry.getAmount());
+            }
+
             System.out.print("   *   ");
         }
         System.out.println();
         System.out.println("====================================================================================================================");
-    }
-
-    public EraAge getEraAge() {
-        return player.getEraAge();
-    }
-
-    public void setEraAge(EraAge eraAge) {
-        this.player.setEraAge(eraAge);
     }
 
     public void setLevel(int level) {
@@ -78,7 +69,7 @@ class PlayerService {
         System.out.println("Descoberta Uma Nova ERA! A Era da " + player.getEraAge().getEraName());
 
         try {
-            Thread.sleep(1500);
+            Thread.sleep(ApplicationConstants.TIME_TO_SHOW_MESSAGE);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -115,26 +106,15 @@ class PlayerService {
         return buildingList;
     }
 
-    public void setBuildingList(List<Building> buildingList) {
-        this.buildingList = buildingList;
-    }
-
-    public List<Worker> getEmployees() {
-        return workers;
-    }
-
-    public void setEmployees(List<Worker> workers) {
-        this.workers = workers;
-    }
-
     public boolean checkIfPlayerHasEnoughResources(Building building) {
         List<ResourceAmount> requiredResources = building.getResourceCost();
-        Boolean hasResourcesAvailable = false;
+        boolean hasResourcesAvailable = false;
 
         for (ResourceAmount buildingResource : requiredResources) {
             for (ResourceAmount playerResource : resources) {
                 if(playerResource.getResource() == buildingResource.getResource()) {
                     hasResourcesAvailable = playerResource.getAmount() >= buildingResource.getAmount();
+                    if(!hasResourcesAvailable) return false;
                 }
             }
         }

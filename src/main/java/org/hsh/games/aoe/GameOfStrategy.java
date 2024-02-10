@@ -7,7 +7,7 @@ import org.hsh.games.aoe.entities.ResourceType;
 import java.util.*;
 
 public class GameOfStrategy {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public void start() {
         PlayerService playerService = createPlayer();
@@ -19,18 +19,17 @@ public class GameOfStrategy {
         System.out.println("Escolhe um nome para a tua aldeia: ");
 
         String farmName = scanner.nextLine();
-        PlayerService playerService = new PlayerService(new Player(farmName));
-        return playerService;
+        return new PlayerService(new Player(farmName));
     }
 
     private void startGame(PlayerService playerService) {
-
         while (true) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(ApplicationConstants.TIME_TO_SHOW_QUICK_MESSAGE);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            ConsoleUtils.clearConsole();
             showMenu(playerService);
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -49,7 +48,7 @@ public class GameOfStrategy {
                     System.out.println("Obrigado por jogar!");
                     System.exit(0);
                 default:
-                    System.out.println("Escolha inválida. Tenta novamente.");
+                    System.out.println(ApplicationConstants.MESSAGE_WRONG_OPTION_TRY_AGAIN);
             }
         }
     }
@@ -61,7 +60,7 @@ public class GameOfStrategy {
         System.out.println("2. Construir/Atualizar edifícios");
         System.out.println("3. Ver status");
         System.out.println("0. Sair do jogo");
-        System.out.print("Escolhe uma opção: ");
+        System.out.print(ApplicationConstants.MESSAGE_CHOOSE_OPTION);
     }
 
     private void displayResourcesAvailableToSearchFor(PlayerService playerService) {
@@ -96,7 +95,7 @@ public class GameOfStrategy {
         if (typeOption > 0 && typeOption <= constructionTypes.size()) {
             displayBuildingsOfType(playerService, constructionTypes.get(typeOption - 1));
         } else {
-            System.out.println("Escolha inválida. Tenta novamente.");
+            System.out.println(ApplicationConstants.MESSAGE_WRONG_OPTION_TRY_AGAIN);
         }
         playerService.checkForNewEraConditions();
     }
@@ -107,7 +106,7 @@ public class GameOfStrategy {
             System.out.printf("%d. ", i + 1);
             buildings.get(i).showDetails();
             if (!playerService.checkIfBuildingAmountHasReached(buildings.get(i))) {
-                System.out.printf("%d Create a new %s\n", i + 2, buildings.get(i).getConstructionTypeName());
+                System.out.printf("%d Cria novo edificio: %s\n", i + 2, buildings.get(i).getConstructionTypeName());
             }
         }
 
@@ -115,14 +114,14 @@ public class GameOfStrategy {
         if (option > 0 && option <= buildings.size()) {
             processSelectedBuilding(playerService, buildings.get(option - 1));
         } else if (option == buildings.size() + 1) {
-            processNewBuilding(playerService, new Building(false, ConstructionType.getEnumFromConstant(selectedType)));
+            processNewBuilding(playerService, new Building(false, Objects.requireNonNull(ConstructionType.getEnumFromConstant(selectedType))));
         } else {
-            System.out.println("Invalid choice. Try again.");
+            System.out.println(ApplicationConstants.MESSAGE_WRONG_OPTION_TRY_AGAIN);
         }
     }
 
     private int getOptionFromUser() {
-        System.out.println("Choose a building to construct or update: ");
+        System.out.println(ApplicationConstants.MESSAGE_CHOOSE_OPTION);
         int option = scanner.nextInt();
         scanner.nextLine();
         return option;
@@ -135,7 +134,7 @@ public class GameOfStrategy {
                 playerService.sendWorkersToConstructionJob(process, building);
             }
         } else {
-            System.out.println("Não tens recursos suficientes!");
+            System.out.println(ApplicationConstants.MESSAGE_NOT_ENOUGH_RESOURCES);
         }
     }
 
@@ -144,7 +143,7 @@ public class GameOfStrategy {
             playerService.addNewBuilding(building);
             playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, building);
         } else {
-            System.out.println("Não tens recursos suficientes!");
+            System.out.println(ApplicationConstants.MESSAGE_NOT_ENOUGH_RESOURCES);
         }
     }
 }
