@@ -75,6 +75,10 @@ public class GameOfStrategy {
         }
 
         int input = scanner.nextInt();
+        if(input < 1 || input > availableResources.size()) {
+            System.out.println(ApplicationConstants.MESSAGE_WRONG_OPTION_TRY_AGAIN);
+            return;
+        }
         if(playerService.getWorkerAvailable() != null) {
             playerService.sendWorkersToSearchJob(availableResources.get(input-1));
         }
