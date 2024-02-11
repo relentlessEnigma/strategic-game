@@ -23,12 +23,12 @@ public class ConstructionUpdatingThread extends Thread {
     @Override
     public void run() {
         worker.setOccupied(true);
-        System.out.println("Worker " + worker.getName() + " comecou a tarefa:\n" + worker.getCurrentMission() + "\nTermina dentro de " + building.getConstructionMinutes() + " minutos.");
+        System.out.println("O trabalhador " + " comecou a tarefa:\n" + worker.getCurrentMission() + "\nTermina dentro de " + building.getConstructionMinutes() + " minutos.");
 
         this.building.upgrade();
 
         worker.setOccupied(false);
-        System.out.println("Worker " + worker.getName() + " terminou a tarefa:\n" + worker.getCurrentMission() + "\n.");
+        System.out.printf("\nO trabalhador terminou a tarefa: %s\n", worker.getCurrentMission());
 
         try {
             Thread.sleep(ApplicationConstants.TIME_TO_SHOW_MESSAGE);

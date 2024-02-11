@@ -25,12 +25,12 @@ public class ConstructionBuildingThread extends Thread {
     @Override
     public void run() {
         worker.setOccupied(true);
-        System.out.printf("Trabalhador começou a tarefa:\n %s\nTermina dentro de %d minutos\n", worker.getCurrentMission(), building.getConstructionMinutes());
+        System.out.printf("O trabalhador começou a tarefa:\n %s\nTermina dentro de %d minutos\n", worker.getCurrentMission(), building.getConstructionMinutes());
 
         building.build(playerResources, playerWorkersList);
 
         worker.setOccupied(false);
-        System.out.printf("Trabalhador terminou a tarefa:\n %s", worker.getCurrentMission());
+        System.out.printf("\nO trabalhador terminou a tarefa: %s\n", worker.getCurrentMission());
 
         try {
             Thread.sleep(ApplicationConstants.TIME_TO_SHOW_MESSAGE);
