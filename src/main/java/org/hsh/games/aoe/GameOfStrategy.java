@@ -23,7 +23,7 @@ public class GameOfStrategy {
     }
 
     private void startGame(PlayerService playerService) {
-        while (true) {
+        while (!playerService.getWorkers().isEmpty()) {
             try {
                 Thread.sleep(ApplicationConstants.TIME_TO_SHOW_QUICK_MESSAGE);
             } catch (InterruptedException e) {
@@ -51,6 +51,7 @@ public class GameOfStrategy {
                     System.out.println(ApplicationConstants.MESSAGE_WRONG_OPTION_TRY_AGAIN);
             }
         }
+        System.out.println("Game Over! It seems theres no one left!");
     }
 
     private void showMenu(PlayerService playerService) {
