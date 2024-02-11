@@ -8,7 +8,7 @@ import java.util.Objects;
 public enum ResourceType {
     WOOD("Madeira", 100, Difficulty.EASY, ThreadUtils.toMilliseconds(5), 100, 2),
     POPULATION("População", 3, Difficulty.HARD, ThreadUtils.toMilliseconds(30), 2,0),
-    WATER("Água", 200, Difficulty.EASY, ThreadUtils.toMilliseconds(3), 100,1),
+    WATER("Água", 12, Difficulty.EASY, ThreadUtils.toMilliseconds(3), 100,1),
     FOOD("Comida", 100, Difficulty.EASY, ThreadUtils.toMilliseconds(7), 100,3),
     STONE("Pedra", 10, Difficulty.EASY, ThreadUtils.toMilliseconds(10), 70,4),
     IRON("Ferro", 0, Difficulty.MEDIUM, ThreadUtils.toMilliseconds(15), 62,10),

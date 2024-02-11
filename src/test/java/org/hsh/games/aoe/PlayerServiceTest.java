@@ -25,9 +25,9 @@ class PlayerServiceTest {
     @Test
     void addResourceIncreasesResourceAmount() {
         // setup
-        playerService.setResources(new ArrayList<>());
+        playerService.setPlayerResources(new ArrayList<>());
         playerService.addResource(ResourceType.WOOD, 10);
-        assertEquals(10, playerService.getResources().get(0).getAmount());
+        assertEquals(10, playerService.getPlayerResources().get(0).getAmount());
     }
 
     @Test
@@ -47,7 +47,7 @@ class PlayerServiceTest {
                 new ResourceAmount(ResourceType.WOOD, 100),
                 new ResourceAmount(ResourceType.WATER, 100)
         );
-        playerService.setResources(playerResources);
+        playerService.setPlayerResources(playerResources);
 
         List<ResourceAmount> buildingCostResources = Arrays.asList(
                 new ResourceAmount(ResourceType.WOOD, 70),
@@ -65,7 +65,7 @@ class PlayerServiceTest {
                 new ResourceAmount(ResourceType.WOOD, 100),
                 new ResourceAmount(ResourceType.WATER, 100)
         );
-        playerService.setResources(playerResources);
+        playerService.setPlayerResources(playerResources);
 
         List<ResourceAmount> buildingCostResources = Arrays.asList(
                 new ResourceAmount(ResourceType.WOOD, 120),
@@ -132,7 +132,7 @@ class PlayerServiceTest {
         Building building = new Building(false, ConstructionType.HOUSE);
         Worker worker = mock(Worker.class);
         List<Worker> workers = Collections.singletonList(worker);
-        playerService.setResources(List.of(new ResourceAmount(ResourceType.WOOD, 100)));
+        playerService.setPlayerResources(List.of(new ResourceAmount(ResourceType.WOOD, 100)));
         playerService.sendWorkersToConstructionJob(ConstructionProcess.CREATION, building);
         assertFalse(playerService.getWorkerAvailable().isOccupied());
     }

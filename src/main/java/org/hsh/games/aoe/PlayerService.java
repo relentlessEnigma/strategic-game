@@ -1,12 +1,14 @@
 package org.hsh.games.aoe;
 
 import org.hsh.games.aoe.entities.*;
+import org.hsh.games.aoe.threads.ResourceConsumptionThread;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 class PlayerService {
     private Player player;
-    private List<ResourceAmount> resources = new ArrayList<>();
+    private List<ResourceAmount> playerResources = new ArrayList<>();
     private List<Worker> workers = new ArrayList<>();
     private List<Building> buildingList = new ArrayList<>();
 
@@ -26,19 +28,20 @@ class PlayerService {
         return workers;
     }
 
-    public List<ResourceAmount> getResources() {
-        return resources;
+    public List<ResourceAmount> getPlayerResources() {
+        return playerResources;
     }
 
-    public void setResources(List<ResourceAmount> resources) {
-        this.resources = resources;
+    public void setPlayerResources(List<ResourceAmount> playerResources) {
+        this.playerResources = playerResources;
     }
 
     public void addWorker(Worker worker) {
-        for(ResourceAmount playerResource : resources) {
+        for(ResourceAmount playerResource : playerResources) {
             if(playerResource.getResource() == ResourceType.POPULATION) {
                 if(workers.size() < playerResource.getAmount()) {
                     workers.add(worker);
+                    startConsumptionThread(worker);
                 } else {
                     System.out.println("Chegaste ao limite de trabalhadores!");
                 }
@@ -46,10 +49,32 @@ class PlayerService {
         }
     }
 
+    public void startConsumptionThread(Worker worker) {
+        ResourceConsumptionThread consumptionThread = new ResourceConsumptionThread(worker, playerResources);
+        consumptionThread.start();
+        consumptionThread.setOnThreadInterruptedListener(() -> removeWorker(worker));
+    }
+
+    private void removeWorker(Worker worker) {
+        workers.remove(worker);
+        Optional<ResourceAmount> populationResource = playerResources.stream()
+                .filter(resource -> resource.getResource() == ResourceType.POPULATION)
+                .findFirst();
+        populationResource.ifPresent(resource -> {
+            int populationAmount = resource.getAmount();
+            if (populationAmount > 0) {
+                resource.setAmount(populationAmount - 1);
+            }
+        });
+        System.out.println("Worker " + worker.getName() + " has died.");
+    }
+
+
+
     public void showResourcesHeader() {
         System.out.println("====================================================================================================================");
         System.out.println(player.getEraAge().getEraName());
-        for (ResourceAmount entry : resources) {
+        for (ResourceAmount entry : playerResources) {
 
             if(entry.getResource() == ResourceType.POPULATION) {
                 System.out.printf("%s: ", entry.getResource().getDescription());
@@ -84,13 +109,13 @@ class PlayerService {
                 .map(constructionType -> new Building(false, constructionType))
                 .toList());
 
-        resources.addAll(availableResourceTypes.stream()
+        playerResources.addAll(availableResourceTypes.stream()
                 .map(resourceType -> new ResourceAmount(resourceType, resourceType.getInitialOffer()))
                 .toList());
     }
 
     public void addResource(ResourceType resourceType, int amount) {
-        Optional<ResourceAmount> optionalResource = resources.stream()
+        Optional<ResourceAmount> optionalResource = playerResources.stream()
                 .filter(resource -> resource.getResource() == resourceType)
                 .findFirst();
 
@@ -98,7 +123,7 @@ class PlayerService {
             ResourceAmount resource = optionalResource.get();
             resource.setAmount(resource.getAmount() + amount);
         } else {
-            resources.add(new ResourceAmount(resourceType, amount));
+            playerResources.add(new ResourceAmount(resourceType, amount));
         }
     }
 
@@ -111,7 +136,7 @@ class PlayerService {
         boolean hasResourcesAvailable = false;
 
         for (ResourceAmount buildingResource : requiredResources) {
-            for (ResourceAmount playerResource : resources) {
+            for (ResourceAmount playerResource : playerResources) {
                 if(playerResource.getResource() == buildingResource.getResource()) {
                     hasResourcesAvailable = playerResource.getAmount() >= buildingResource.getAmount();
                     if(!hasResourcesAvailable) return false;
@@ -145,18 +170,18 @@ class PlayerService {
 
     public void sendWorkersToConstructionJob(ConstructionProcess process, Building construction) {
         prepareNeededResources(construction);
-        getWorkerAvailable().makeConstruction(process, construction, resources, workers);
+        getWorkerAvailable().makeConstruction(process, construction, playerResources, workers);
     }
 
     public void sendWorkersToSearchJob(ResourceType resourcesToSearch) {
-        getWorkerAvailable().searchResources(resourcesToSearch, resources);
+        getWorkerAvailable().searchResources(resourcesToSearch, playerResources);
     }
 
     private void prepareNeededResources(Building construction) {
         List<ResourceAmount> requiredResources = construction.getResourceCost();
 
         for (ResourceAmount buildingResource : requiredResources) {
-            for (ResourceAmount playerResource : resources) {
+            for (ResourceAmount playerResource : playerResources) {
                 if(playerResource.getResource() == buildingResource.getResource()) {
                     playerResource.setAmount(playerResource.getAmount() - buildingResource.getAmount());
                 }

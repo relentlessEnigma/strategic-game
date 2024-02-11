@@ -1,25 +1,34 @@
 package org.hsh.games.aoe.entities;
 
-import org.hsh.games.aoe.Building;
-import org.hsh.games.aoe.ConstructionProcess;
-import org.hsh.games.aoe.Resource;
-import org.hsh.games.aoe.ResourceAmount;
+import org.hsh.games.aoe.*;
 import org.hsh.games.aoe.threads.ConstructionBuildingThread;
 import org.hsh.games.aoe.threads.ConstructionUpdatingThread;
+import org.hsh.games.aoe.threads.ResourceConsumptionThread;
 import org.hsh.games.aoe.threads.SearchResourcesThread;
 
 import java.util.List;
 
-public class Worker {
+public class Worker extends Consumer<ResourceAmount> {
     private String name;
     private boolean isOccupied;
     private ResourceAmount resourceConsumption;
     private String currentMission;
+    private final int TIME_BETWEEN_CONSUMPTIONS = ThreadUtils.toMilliseconds(1);
 
     public Worker(String name) {
         this.name = name;
         this.isOccupied = false;
         this.resourceConsumption = new ResourceAmount(ResourceType.FOOD, 50);
+    }
+
+    @Override
+    public List<ResourceAmount> getConsumptionType() {
+        return List.of(new ResourceAmount(ResourceType.WATER, 5));
+    }
+
+    @Override
+    public int getTimeBetweenConsumptions() {
+        return this.TIME_BETWEEN_CONSUMPTIONS;
     }
 
     public String getName() {
