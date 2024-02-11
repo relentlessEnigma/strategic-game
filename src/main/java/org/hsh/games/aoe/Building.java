@@ -63,6 +63,12 @@ public class Building {
             increaseResourceCost();
             increaseResourceProductions();
         }
+        checkIfPlayerIsEligibleToNextEra();
+    }
+
+    private void checkIfPlayerIsEligibleToNextEra() {
+        // What do i need here to increase the era level?
+        // i need the player object to have a method to increase the era level
     }
 
     private void sleep(int millis) {

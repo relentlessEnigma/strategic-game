@@ -34,12 +34,67 @@ public class Resource {
         System.out.printf("O %s começou a tarefa de %s\nTermina dentro de %d minutos.\n", workerName, currentMission, ThreadUtils.toMinutes(totalSearchTime));
 
         try {
-            Thread.sleep(totalSearchTime);
+
+            int splittedTime = totalSearchTime/3;
+            Thread.sleep(splittedTime);
+            isPLayerWorkerInjured();
+            if(isPLayerWorkerKilled()) return;
+            Thread.sleep(totalSearchTime-splittedTime);
             ResourceAmount resourceFound = new ResourceAmount(type, random.nextInt(lowestAmountToBeFound, amountMaxToBeFound));
             addToPlayerResources(playerResources, resourceFound);
             System.out.printf("%s voltou para casa com %d de %s\n", workerName, resourceFound.getAmount(), resourceFound.getResource().getDescription());
         } catch (java.lang.InterruptedException e) {
             System.out.println("O trabalhador aleijou-se enquanto procurava resources!!");
+        }
+    }
+
+    public boolean isPLayerWorkerKilled() {
+
+        if(hardToGet.equals(Difficulty.EASY)) return false;
+        if(hardToGet.equals(Difficulty.MEDIUM)) {
+            Random random = new Random();
+            int killed = random.nextInt(1, 100);
+            if(killed > 80) {
+                System.out.println("O trabalhador foi atacado por um animal selvagem e foi morto");
+                return true;
+            }
+            return false;
+        }
+
+        if(hardToGet.equals(Difficulty.HARD) || hardToGet.equals(Difficulty.EXTREME)) {
+            Random random = new Random();
+            int killed = random.nextInt(1, 100);
+            if(killed > 70) {
+                System.out.println("O trabalhador foi atacado por um animal selvagem e foi morto");
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public void isPLayerWorkerInjured() {
+        if(hardToGet.equals(Difficulty.EASY)) return;
+        if(hardToGet.equals(Difficulty.MEDIUM)) {
+            Random random = new Random();
+            int injured = random.nextInt(1, 100);
+            if(injured > 80) {
+                System.out.println("O trabalhador foi atacado por um animal selvagem e voltou para casa com menos recursos");
+            }
+            return;
+        }
+        if(hardToGet.equals(Difficulty.HARD) || hardToGet.equals(Difficulty.EXTREME)) {
+            Random random = new Random();
+            int injured = random.nextInt(1, 100);
+            if(injured > 60) {
+                System.out.println("O trabalhador foi atacado por um animal selvagem e voltou para casa com menos recursos");
+            }
+            return;
+        }
+        Random random = new Random();
+        int injured = random.nextInt(1, 100);
+        if(injured > 50) {
+            System.out.println("O trabalhador foi atacado por um animal selvagem e voltou para casa com menos recursos");
         }
     }
 

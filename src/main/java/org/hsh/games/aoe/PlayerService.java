@@ -89,6 +89,18 @@ class PlayerService {
         System.out.println("====================================================================================================================");
     }
 
+    /**
+     * Check if the player is eligible for a new era
+     * @return true if the player is eligible for a new era
+     * @return false if the player is not eligible for a new era
+     */
+    public boolean isPlayerEligibleForNewEra() {
+        return buildingList.stream().allMatch(building ->
+                player.getEraAge()
+                        .getRequirementsForNextLevel()
+                        .get(ConstructionType.getEnumFromConstant(building.getConstructionTypeName())) <= building.getLevel());
+    }
+
     public void setLevel(int level) {
         player.setEraAge(EraAge.getByLevel(level));
         System.out.println("Descoberta Uma Nova ERA! A Era da " + player.getEraAge().getEraName());
