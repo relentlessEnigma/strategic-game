@@ -13,6 +13,7 @@ public class Resource {
     int timeLimitForSearch;
     int amountMaxToBeFound;
     int pricePerUnit;
+
     public Resource(ResourceType resourceType) {
         this.type = resourceType;
         this.name = resourceType.getDescription();

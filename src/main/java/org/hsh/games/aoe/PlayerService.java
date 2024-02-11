@@ -194,8 +194,8 @@ class PlayerService {
         if(worker.isPresent()) {
             return worker.get();
         } else {
-            System.out.println("Todos os seus funcionários estão ocupados com tarefas!");
-            System.out.println("Crie mais funcionários.");
+            System.out.println("Todos os seus trabalhadores estão ocupados com tarefas!");
+            System.out.println("Crie mais trabalhadores.");
             return null;
         }
     }
